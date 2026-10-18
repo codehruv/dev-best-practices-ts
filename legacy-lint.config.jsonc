@@ -1,0 +1,32 @@
+// legacy-lint-manager config. See docs/reference/lint-ratchet.md before changing anything:
+// validate compares enforcement settings against the compare branch and rejects loosening.
+{
+  "linterType": "eslint",
+  // Runs once per workspace package, from the package directory. Every package's `lint`
+  // script must be a single ESLint invocation, because the extra args land on the last
+  // command in the script. The silent flag keeps pnpm's banner out of the JSON output.
+  "lintCommand": {
+    "command": "pnpm",
+    "args": ["--silent", "lint", "--format=json"],
+  },
+  "ignoreWarnings": false,
+  "pragma": "This lint error is legacied. DO NOT COPY",
+  "databaseFile": "legacy-lint.data.json",
+  "compareBranch": "main",
+  // Rules no one may suppress. A legitimate exception to any of these does not exist,
+  // because each has a fix that keeps the rule satisfied (restructure the import graph,
+  // use `unknown` with a type guard, `void` an intentionally unawaited promise).
+  "nonDisableableRules": [
+    "import-integrity/no-cycle",
+    "import-integrity/no-test-imports-in-prod",
+    "import-integrity/no-test-only-imports",
+    "import-integrity/no-unused-exports",
+    "@typescript-eslint/ban-ts-comment",
+    "@typescript-eslint/no-explicit-any",
+    "@typescript-eslint/no-floating-promises",
+    "no-restricted-syntax",
+  ],
+  "monorepoConfig": {
+    "ignorePackagePaths": [],
+  },
+}

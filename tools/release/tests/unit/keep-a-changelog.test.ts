@@ -5,7 +5,6 @@ import {
   addRelease,
   emptyChangelog,
   releaseTag,
-  renderRelease,
 } from '../../src/keep-a-changelog.js';
 import { makeEntry } from './fakes.js';
 
@@ -28,19 +27,23 @@ describe('emptyChangelog', () => {
   });
 });
 
-describe('renderRelease', () => {
+describe('addRelease', () => {
   it('groups entries by type in spec order with breaking entries first', () => {
-    const text = renderRelease({
-      version: '2.0.0',
-      date: '2026-10-18',
-      entries: [
-        makeEntry({ type: 'Fixed', text: 'A bug.' }),
-        makeEntry({ type: 'Changed', text: 'Minor tweak.' }),
-        makeEntry({ type: 'Changed', text: 'New return type.', breaking: true }),
-        makeEntry({ type: 'Added', text: 'A feature.' }),
-      ],
-    });
-    expect(text).toBe(
+    const text = addRelease(
+      emptyChangelog(),
+      {
+        version: '2.0.0',
+        date: '2026-10-18',
+        entries: [
+          makeEntry({ type: 'Fixed', text: 'A bug.' }),
+          makeEntry({ type: 'Changed', text: 'Minor tweak.' }),
+          makeEntry({ type: 'Changed', text: 'New return type.', breaking: true }),
+          makeEntry({ type: 'Added', text: 'A feature.' }),
+        ],
+      },
+      { repoUrl: REPO, packageName: '@dbp/widget', previousVersion: undefined },
+    );
+    expect(text).toContain(
       [
         '## [2.0.0] - 2026-10-18',
         '',
@@ -60,9 +63,7 @@ describe('renderRelease', () => {
       ].join('\n'),
     );
   });
-});
 
-describe('addRelease', () => {
   it('adds the first release below Unreleased with a tag link', () => {
     const result = addRelease(
       emptyChangelog(),

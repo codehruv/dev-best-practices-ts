@@ -4,7 +4,7 @@ const BREAKING_MARKER = '**Breaking:**';
 const ENTRY_START = new RegExp(`^(${CHANGE_TYPES.join('|')}):\\s+(\\S.*)$`);
 
 /** The entries a changeset summary declares, or the reasons it does not parse. */
-export type ParsedSummary =
+type ParsedSummary =
   | { readonly ok: true; readonly entries: readonly ChangelogEntry[] }
   | { readonly ok: false; readonly errors: readonly string[] };
 

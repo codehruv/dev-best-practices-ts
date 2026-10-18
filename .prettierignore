@@ -8,3 +8,12 @@ flake.lock
 # Generated. `just generate` owns their format.
 **/etc/*.api.md
 **/openapi/openapi.json
+
+# Vendored agent skills. skills-lock.json pins each by content hash, so reformatting
+# them desyncs the lockfile. Update them with `npx skills add <owner>/<repo>#<tag>`.
+.agents/skills/import-integrity/
+.agents/skills/legacy-lint-validation/
+skills-lock.json
+
+# Written by legacy-lint-manager. Change it only through `just legacy-update`.
+legacy-lint.data.json

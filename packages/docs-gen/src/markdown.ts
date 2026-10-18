@@ -1,5 +1,5 @@
 /** A link target found in a markdown file, with its 1-based line for error messages. */
-export interface MarkdownLink {
+interface MarkdownLink {
   readonly href: string;
   readonly line: number;
 }

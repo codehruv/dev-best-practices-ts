@@ -17,7 +17,7 @@ setup:
     pnpm exec lefthook install
 
 # Run every check CI runs.
-verify: fmt-check lint deadcode banned-terms changesets typecheck test docs-check
+verify: fmt-check lint legacy-validate deadcode banned-terms changesets typecheck test docs-check
 
 # Apply linter then formatter fixes, then verify. Lint fixes run first because they can
 # leave code the formatter has to reflow.
@@ -60,7 +60,18 @@ test:
 docs-check:
     pnpm run docs:check {{ turbo_flags }}
 
-# Find unused files, exports, and dependencies.
+# Check legacied lint suppressions against the compare branch. The linter catches new
+# violations; this catches new suppressions.
+legacy-validate:
+    pnpm run lint:legacy-validation
+
+# Prune legacy comments and database entries after fixing legacied violations. Never use
+# it to absorb a new violation: validate rejects a database that grew.
+legacy-update:
+    pnpm run lint:legacy-validation:update
+
+# Find unused files, dependencies, and binaries. Unused exports belong to
+# import-integrity-lint, which runs inside ESLint.
 deadcode:
     pnpm run deadcode
 

@@ -3,7 +3,7 @@ import type { BumpReason, BumpType } from './types.js';
 const RANK: Record<BumpType, number> = { none: 0, patch: 1, minor: 2, major: 3 };
 
 /** The larger of the given bumps, or `none` for an empty list. */
-export function maxBump(bumps: Iterable<BumpType>): BumpType {
+function maxBump(bumps: Iterable<BumpType>): BumpType {
   let result: BumpType = 'none';
   for (const bump of bumps) {
     if (RANK[bump] > RANK[result]) result = bump;

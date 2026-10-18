@@ -16,7 +16,7 @@ export interface CheckInput {
 }
 
 /** The verdict for one interface. */
-export interface InterfaceVerdict {
+interface InterfaceVerdict {
   readonly name: string;
   readonly version: string;
   /** The bump the diff requires, after the 0.x policy. */
@@ -29,7 +29,7 @@ export interface InterfaceVerdict {
 }
 
 /** The result of checking every interface against the base ref. */
-export interface CheckResult {
+interface CheckResult {
   readonly verdicts: readonly InterfaceVerdict[];
   /** Problems that belong to no single interface, such as unparseable changesets. */
   readonly errors: readonly string[];

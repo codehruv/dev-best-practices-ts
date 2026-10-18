@@ -182,7 +182,7 @@ export const LAPTOP: Environment = {
 // ── Command IO ────────────────────────────────────────────────────────────
 
 /** In-memory file system and captured output for {@link runSloCommand} tests. */
-export interface FakeIo extends CommandIo {
+interface FakeIo extends CommandIo {
   readonly files: Map<string, string>;
   readonly out: string[];
   readonly err: string[];

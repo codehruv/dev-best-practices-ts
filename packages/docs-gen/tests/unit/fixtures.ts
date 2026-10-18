@@ -13,7 +13,7 @@ afterEach(() => {
 });
 
 /** A package on disk with the files a test needs. Removed after each test. */
-export interface PackageFixture {
+interface PackageFixture {
   readonly dir: string;
   write(path: string, content: string): void;
 }

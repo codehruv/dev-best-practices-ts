@@ -1,12 +1,12 @@
-import { describe, expect, it, vi } from 'vitest';
-
 import {
   InvalidRetryPolicyError,
   Retrier,
   RetryAbortedError,
   RetryError,
   RetryExhaustedError,
-} from '../../src/index.js';
+} from '@dbp/retry';
+import { describe, expect, it, vi } from 'vitest';
+
 import { failingThenSucceeding, makeDependencies, makePolicy } from './fakes.js';
 
 describe('Retrier', () => {

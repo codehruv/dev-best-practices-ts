@@ -22,7 +22,8 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          # Turborepo's --affected diffs against the PR base, which needs history.
+          # Turborepo's --affected diffs against the PR base, and legacy-lint-manager
+          # validate reads main with git show. Both need full history.
           fetch-depth: 0
           persist-credentials: false
 

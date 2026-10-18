@@ -1,6 +1,5 @@
+import { computeBackoffDelay, Retrier, type RetryDependencies } from '@dbp/retry';
 import { bench, describe } from 'vitest';
-
-import { computeBackoffDelay, Retrier, type RetryDependencies } from '../../src/index.js';
 
 // Each benchmark iteration repeats its operation a fixed number of times. A single call
 // takes tens of nanoseconds, close to the timer's resolution, so one-call iterations

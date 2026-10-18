@@ -1,13 +1,12 @@
 import { readFileSync } from 'node:fs';
 
-import { describe, expect, it } from 'vitest';
-
 import {
   buildOpenApiDocument,
   CreateNoteRequestSchema,
   ListNotesQuerySchema,
   NoteSchema,
-} from '../../src/index.js';
+} from '@dbp/api-contract';
+import { describe, expect, it } from 'vitest';
 
 const packageVersion = (JSON.parse(readFileSync('package.json', 'utf8')) as { version: string })
   .version;

@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "skills": {
+    "import-integrity": {
+      "source": "nebrius/import-integrity-lint",
+      "ref": "v1.3.0",
+      "sourceType": "github",
+      "skillPath": "skills/import-integrity/SKILL.md",
+      "computedHash": "24c5a8db03acf779aca7c3fda59dbbe2000f379d457e5e2ecfcc989a84b6afea"
+    },
+    "legacy-lint-validation": {
+      "source": "nebrius/legacy-lint-manager",
+      "ref": "v1.1.0",
+      "sourceType": "github",
+      "skillPath": "skills/legacy-lint-validation/SKILL.md",
+      "computedHash": "6708912ce454cdbd89d4cfad39f0089f6f7e05d0ecdcef9ef36eee9ee71ba63f"
+    }
+  }
+}

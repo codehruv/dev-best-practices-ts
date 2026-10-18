@@ -21,5 +21,5 @@
       "project": ["src/**/*.ts", "tests/**/*.ts"]
     }
   },
-  "ignoreExportsUsedInFile": true
+  "exclude": ["exports", "nsExports", "types", "nsTypes", "duplicates"]
 }

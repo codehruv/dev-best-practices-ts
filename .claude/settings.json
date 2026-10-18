@@ -8,6 +8,8 @@
       "Bash(just lint)",
       "Bash(just typecheck)",
       "Bash(just fmt)",
+      "Bash(just legacy-validate)",
+      "Bash(just legacy-update)",
       "Bash(just --list)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
@@ -38,7 +40,9 @@
       "Read(./**/*.pem)",
       "Read(./**/*.key)",
       "Bash(git push --force:*)",
-      "Bash(git push -f:*)"
+      "Bash(git push -f:*)",
+      "Bash(pnpm exec legacy-lint-manager legacy-errors:*)",
+      "Bash(npx legacy-lint-manager legacy-errors:*)"
     ]
   },
   "hooks": {

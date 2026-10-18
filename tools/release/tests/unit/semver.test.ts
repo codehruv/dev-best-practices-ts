@@ -1,18 +1,22 @@
 import { describe, expect, it } from 'vitest';
 
-import { effectiveBump, maxBump, requiredBump, satisfiesBump } from '../../src/semver.js';
-
-describe('maxBump', () => {
-  it('returns the largest bump', () => {
-    expect(maxBump(['patch', 'major', 'minor'])).toBe('major');
-  });
-
-  it('returns none for no bumps', () => {
-    expect(maxBump([])).toBe('none');
-  });
-});
+import { effectiveBump, requiredBump, satisfiesBump } from '../../src/semver.js';
 
 describe('requiredBump', () => {
+  it('returns the largest bump regardless of order', () => {
+    expect(
+      requiredBump([
+        { bump: 'patch', message: 'fixed' },
+        { bump: 'major', message: 'removed' },
+        { bump: 'minor', message: 'added' },
+      ]),
+    ).toBe('major');
+  });
+
+  it('returns none when there are no reasons', () => {
+    expect(requiredBump([])).toBe('none');
+  });
+
   it('takes the largest bump among reasons', () => {
     expect(
       requiredBump([

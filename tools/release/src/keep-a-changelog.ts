@@ -4,7 +4,7 @@ const SPEC_URL = 'https://keepachangelog.com/en/2.0.0/';
 const UNRELEASED_HEADING = '## [Unreleased]';
 
 /** A release to write into a changelog. */
-export interface ReleaseSection {
+interface ReleaseSection {
   readonly version: string;
   /** ISO 8601 calendar date, `YYYY-MM-DD`. */
   readonly date: string;
@@ -12,7 +12,7 @@ export interface ReleaseSection {
 }
 
 /** Where version tags live, so each release links to the diff that produced it. */
-export interface ReleaseLinks {
+interface ReleaseLinks {
   /** Repository web URL without a trailing slash, for example `https://github.com/o/r`. */
   readonly repoUrl: string;
   readonly packageName: string;
@@ -52,7 +52,7 @@ export function emptyChangelog(): string {
 }
 
 /** Renders one release: the version heading, then one section per change type in spec order. */
-export function renderRelease({ version, date, entries }: ReleaseSection): string {
+function renderRelease({ version, date, entries }: ReleaseSection): string {
   const lines = [`## [${version}] - ${date}`];
   for (const type of CHANGE_TYPES) {
     // Breaking entries lead their section so a reader scanning the section meets them first.

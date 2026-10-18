@@ -1,6 +1,5 @@
+import { mathRandom, timerSleeper } from '@dbp/retry';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { mathRandom, timerSleeper } from '../../src/index.js';
 
 describe('timerSleeper', () => {
   beforeEach(() => {

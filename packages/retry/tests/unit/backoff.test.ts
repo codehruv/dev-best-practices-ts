@@ -1,6 +1,6 @@
+import { computeBackoffDelay } from '@dbp/retry';
 import { describe, expect, it } from 'vitest';
 
-import { computeBackoffDelay } from '../../src/index.js';
 import { makePolicy, makeRandom } from './fakes.js';
 
 describe('computeBackoffDelay', () => {
