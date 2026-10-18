@@ -134,3 +134,11 @@ Full rules with links to the official sources: [`docs/reference/typescript.md`](
 | `just freshness` | `just generate`, then fails on any diff (CI only)                                                                                    |
 
 Set `TURBO_FLAGS=--affected` to limit task-graph recipes to changed packages, as CI does on pull requests. Run one package directly with `pnpm --filter @dbp/<name> <script>`.
+
+## Lint Ratchet & Import Integrity
+
+`import-integrity-lint` checks the import graph inside ESLint (dead exports, test-only exports, cycles, boundaries). `legacy-lint-manager` makes suppressed violations a one-way ratchet: `just verify` also runs `just legacy-validate`, which rejects any new suppression relative to `main`. Full rules: [`docs/reference/lint-ratchet.md`](docs/reference/lint-ratchet.md).
+
+- **Never hand-edit `legacy-lint.data.json`, a legacy comment, or `legacy-lint.config.jsonc` enforcement settings.** Run `just legacy-update` only to prune after fixing a legacied violation, never to absorb a new one. Never run `legacy-errors`: registering violations is a human decision.
+- **Never disable `import-integrity/no-unused-exports`.** Delete the export, prefix a test-only export with `_testOnly`, or add the file to the package's `entryPointFiles`.
+- `.agents/skills/import-integrity` and `.agents/skills/legacy-lint-validation` are vendored and pinned in `skills-lock.json`. Never hand-edit them. Update with `npx skills add <owner>/<repo>#<tag>`.
