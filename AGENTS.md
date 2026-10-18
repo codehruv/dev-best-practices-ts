@@ -96,9 +96,11 @@ Debate with evidence, then commit. Match the process to the blast radius:
 
 - **Small or reversible:** make the call and move on.
 - **Medium, or affects a contract:** write a one-pager from [`docs/templates/one-pager.md`](docs/templates/one-pager.md).
+- **New user-facing capability:** write a PRD (what and why) and at least one RFC (how) from [`docs/templates/`](docs/templates/).
 - **Large, architectural, or hard to roll back:** write a design doc from [`docs/templates/design-doc.md`](docs/templates/design-doc.md) and get explicit sign-off.
+- **Work split across PRs or agents, or a public contract:** add a spec with numbered requirements (`REQ-001`) that tests cite.
 
-Record every accepted architectural decision as an ADR in [`docs/adr/`](docs/adr/).
+Record every accepted architectural decision as an ADR in [`docs/adr/`](docs/adr/). The ladder, requirement traits, review process, and the path from proposal to PR stacks: [`docs/reference/proposals.md`](docs/reference/proposals.md).
 
 ## What Not To Do
 

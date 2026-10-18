@@ -1,8 +1,12 @@
 # One Pager: <Title>
 
 - **Author:** <name>
-- **Status:** Draft | In review | Accepted | Rejected
+- **Approvers:** <names>
+- **Status:** Draft | In review | Accepted | Rejected | Implemented
 - **Date:** YYYY-MM-DD
+- **Decision deadline:** YYYY-MM-DD
+
+A short, stand-alone RFC for a small initiative. If it grows past one page, write an RFC. See [`../reference/proposals.md`](../reference/proposals.md).
 
 ## Problem
 
