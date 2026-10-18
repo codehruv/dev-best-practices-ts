@@ -1,0 +1,33 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
+  "newlineKind": "lf",
+  "mainEntryPointFilePath": "<projectFolder>/dist/index.d.ts",
+  "compiler": {
+    "tsconfigFilePath": "<projectFolder>/tsconfig.build.json"
+  },
+  "apiReport": {
+    "enabled": true,
+    "reportFolder": "<projectFolder>/etc/",
+    "reportTempFolder": "<projectFolder>/dist/api-report/"
+  },
+  "docModel": { "enabled": false },
+  "dtsRollup": { "enabled": false },
+  "tsdocMetadata": { "enabled": false },
+  "messages": {
+    "compilerMessageReporting": {
+      "default": { "logLevel": "error" }
+    },
+    "extractorMessageReporting": {
+      "default": { "logLevel": "error" },
+      "ae-missing-release-tag": { "logLevel": "error" }
+    },
+    "tsdocMessageReporting": {
+      "default": { "logLevel": "error" },
+      // TypeDoc owns tag validation: it rejects any block tag outside the shared list in
+      // @dbp/docs-gen/typedoc.base.json. API Extractor reads tag definitions from the same
+      // tsdoc.json TypeDoc would read, which would override that list, so it cannot learn
+      // TypeDoc's {@includeCode} tag and must not report it.
+      "tsdoc-undefined-tag": { "logLevel": "none" }
+    }
+  }
+}

@@ -4,6 +4,10 @@
   "private": true,
   "type": "module",
   "description": "TypeScript monorepo template with battle-tested engineering practices, linters, agent defaults, and automations.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codehruv/dev-best-practices-ts.git"
+  },
   "packageManager": "pnpm@11.17.0",
   "engines": {
     "node": ">=22.18.0"
@@ -18,11 +22,15 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "deadcode": "knip",
+    "changeset": "changeset",
+    "release-tools": "turbo run build --filter=@dbp/release-tools --output-logs=errors-only && node tools/release/dist/cli.js",
+    "version-packages": "pnpm run release-tools changelog && changeset version && pnpm run generate && prettier --write --log-level warn \"**/CHANGELOG.md\" \"**/package.json\"",
     "docs:check": "turbo run docs:check",
     "bench": "pnpm --recursive --workspace-concurrency=1 --if-present run bench",
     "slo": "turbo run build --filter=@dbp/slo --output-logs=errors-only && node packages/slo/dist/cli.js"
   },
   "devDependencies": {
+    "@changesets/cli": "catalog:",
     "@eslint/js": "catalog:",
     "@types/node": "catalog:",
     "eslint": "catalog:",

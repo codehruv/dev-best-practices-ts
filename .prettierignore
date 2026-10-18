@@ -4,3 +4,7 @@ node_modules
 .turbo
 pnpm-lock.yaml
 flake.lock
+
+# Generated. `just generate` owns their format.
+**/etc/*.api.md
+**/openapi/openapi.json

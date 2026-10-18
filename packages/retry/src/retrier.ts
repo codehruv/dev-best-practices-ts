@@ -7,6 +7,8 @@ import type { RetryDependencies, RetryPolicy } from './types.js';
  * An operation the retrier calls once per attempt. `attempt` is 1-based. Pass `signal` on
  * to I/O calls so cancellation stops in-flight work.
  *
+ * @public
+ *
  * @example Forward the signal to fetch
  * {@includeCode ../tests/docs/reference/examples.test.ts#RetryOperation}
  */
@@ -16,6 +18,8 @@ export type RetryOperation<T> = (attempt: number, signal: AbortSignal | undefine
  * Retries transient failures of async operations with capped exponential backoff and
  * full jitter. Validate the policy once at construction and reuse the instance across calls.
  *
+ * @public
+ *
  * @example Retry an operation
  * {@includeCode ../tests/docs/reference/examples.test.ts#Retrier}
  */
@@ -23,7 +27,7 @@ export class Retrier {
   readonly #policy: RetryPolicy;
   readonly #deps: RetryDependencies;
 
-  /** @throws {InvalidRetryPolicyError} when the policy cannot produce a valid schedule. */
+  /** @throws {@link InvalidRetryPolicyError} when the policy cannot produce a valid schedule. */
   constructor(policy: RetryPolicy, deps: RetryDependencies = defaultDependencies) {
     validatePolicy(policy);
     this.#policy = policy;
@@ -33,8 +37,8 @@ export class Retrier {
   /**
    * Runs `operation` until it resolves or retrying stops.
    *
-   * @throws {RetryExhaustedError} when attempts, the predicate, or the time budget stop retrying.
-   * @throws {RetryAbortedError} when `signal` aborts before or between attempts.
+   * @throws {@link RetryExhaustedError} when attempts, the predicate, or the time budget stop retrying.
+   * @throws {@link RetryAbortedError} when `signal` aborts before or between attempts.
    */
   async run<T>(operation: RetryOperation<T>, signal?: AbortSignal): Promise<T> {
     const { clock, sleeper, random } = this.#deps;

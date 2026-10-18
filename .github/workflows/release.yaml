@@ -1,0 +1,121 @@
+name: Release
+
+# Pending changesets on main open (or update) a "Version Packages" PR. That PR runs
+# `pnpm run version-packages`: Keep a Changelog sections, version bumps, regenerated
+# contracts. A human curates the changelog text in that PR. Merging it lands the versions,
+# and the next run tags each release and publishes any public package.
+on:
+  push:
+    branches: [main]
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}
+  # A half-finished release run must not be cancelled by the next push.
+  cancel-in-progress: false
+
+jobs:
+  version:
+    name: Version PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      has-changesets: ${{ steps.changesets.outputs.has-changesets }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Changelog generation diffs OpenAPI documents against the last release tag.
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install oasdiff
+        env:
+          OASDIFF_VERSION: 1.33.0
+          OASDIFF_SHA256: 43a4e328e2d13ba1552d760aa68d2485c75c5621f309f6ff64ae895188345247
+        run: |
+          archive="oasdiff_${OASDIFF_VERSION}_linux_amd64.tar.gz"
+          curl -sSfLo "$RUNNER_TEMP/$archive" "https://github.com/oasdiff/oasdiff/releases/download/v${OASDIFF_VERSION}/${archive}"
+          echo "${OASDIFF_SHA256}  $RUNNER_TEMP/$archive" | sha256sum --check --strict
+          tar -xzf "$RUNNER_TEMP/$archive" -C "$RUNNER_TEMP" oasdiff
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Open or update the version PR
+        id: changesets
+        uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        with:
+          version-script: pnpm run version-packages
+          commit-message: 'chore(release): version packages'
+          pr-title: 'chore(release): version packages'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish:
+    name: Tag and publish
+    needs: version
+    # No pending changesets means the version PR just merged, so its versions are on main.
+    if: needs.version.outputs.has-changesets == 'false'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      # npm provenance proves the package was built by this workflow from this commit.
+      id-token: write
+    env:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Require NPM_TOKEN for public packages
+        # Private packages only get git tags. A public package without a token would fail
+        # mid-publish, so this fails first with the fix.
+        run: |
+          public="$(node -e '
+            const fs = require("node:fs");
+            for (const dir of fs.readdirSync("packages")) {
+              const file = "packages/" + dir + "/package.json";
+              if (fs.existsSync(file) && JSON.parse(fs.readFileSync(file, "utf8")).private !== true) console.log(dir);
+            }')"
+          if [ -n "$public" ] && [ -z "$NPM_TOKEN" ]; then
+            echo "::error::Public packages need an NPM_TOKEN repository secret to publish: $public"
+            exit 1
+          fi
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Tag releases and publish public packages
+        uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        with:
+          publish-script: pnpm changeset publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: 'true'

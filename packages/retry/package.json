@@ -22,11 +22,12 @@
     "test:unit": "vitest run",
     "bench": "vitest bench --run --no-file-parallelism",
     "clean": "rm -rf dist coverage",
-    "generate": "typedoc && dbp-docs-gen generate",
+    "generate": "typedoc && dbp-docs-gen generate && mkdir -p etc && api-extractor run --local",
     "docs:check": "dbp-docs-gen check"
   },
   "devDependencies": {
     "@dbp/docs-gen": "workspace:*",
+    "@microsoft/api-extractor": "catalog:",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "eslint": "catalog:",

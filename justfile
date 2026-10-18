@@ -17,7 +17,7 @@ setup:
     pnpm exec lefthook install
 
 # Run every check CI runs.
-verify: fmt-check lint deadcode banned-terms typecheck test docs-check
+verify: fmt-check lint deadcode banned-terms changesets typecheck test docs-check
 
 # Apply linter then formatter fixes, then verify. Lint fixes run first because they can
 # leave code the formatter has to reflow.
@@ -77,6 +77,24 @@ generate:
 freshness: generate
     git diff --exit-code
     test -z "$(git status --porcelain)"
+
+# Fail when an interface changed since BASE without a pending changeset that covers it.
+# Regenerates first, so the API reports and OpenAPI documents match the source.
+api-check BASE="main": generate
+    pnpm run release-tools check --base {{ BASE }}
+
+# Fail when a pending changeset does not follow the Keep a Changelog entry convention.
+changesets:
+    pnpm run release-tools lint
+
+# Record a pending release: pick packages, a bump, and write Keep a Changelog entries.
+changeset:
+    pnpm changeset
+
+# Turn pending changesets into versions and changelog sections. The release workflow runs
+# this in its version PR, so it rarely runs locally.
+version-packages:
+    pnpm run version-packages
 
 # Timings depend on machine load, so this stays out of `verify`. CI runs it in its own
 # workflow (.github/workflows/slo.yaml).

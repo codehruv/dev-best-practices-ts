@@ -14,7 +14,7 @@
       "outputs": ["dist/**"]
     },
     "generate": {
-      "dependsOn": ["^generate", "^build"],
+      "dependsOn": ["^generate", "^build", "build"],
       "cache": false
     },
     "typecheck": {
@@ -33,7 +33,14 @@
     },
     "test:unit": {
       "dependsOn": ["^build"],
-      "inputs": ["src/**", "tests/**", "vitest.config.ts", "tsconfig*.json", "package.json"],
+      "inputs": [
+        "src/**",
+        "tests/**",
+        "openapi/**",
+        "vitest.config.ts",
+        "tsconfig*.json",
+        "package.json"
+      ],
       "outputs": []
     },
     "clean": {

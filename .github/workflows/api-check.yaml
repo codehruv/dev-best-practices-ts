@@ -1,0 +1,65 @@
+name: API Check
+
+# Every interface (a package's TypeScript API report, a package's OpenAPI document)
+# versions independently. This fails a PR that changes an interface without a pending
+# changeset that bumps it enough. ci.yaml's freshness check keeps the committed reports
+# and documents in sync with the source, so this job reads them as committed.
+on:
+  pull_request:
+  merge_group:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  api-check:
+    name: Interface versions
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      # merge_group events have no base_ref, and the queue only holds PRs to main.
+      BASE_REF: ${{ github.base_ref || 'main' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The check reads files at the base branch and at release tags.
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install oasdiff
+        env:
+          OASDIFF_VERSION: 1.33.0
+          OASDIFF_SHA256: 43a4e328e2d13ba1552d760aa68d2485c75c5621f309f6ff64ae895188345247
+        run: |
+          archive="oasdiff_${OASDIFF_VERSION}_linux_amd64.tar.gz"
+          curl -sSfLo "$RUNNER_TEMP/$archive" "https://github.com/oasdiff/oasdiff/releases/download/v${OASDIFF_VERSION}/${archive}"
+          echo "${OASDIFF_SHA256}  $RUNNER_TEMP/$archive" | sha256sum --check --strict
+          tar -xzf "$RUNNER_TEMP/$archive" -C "$RUNNER_TEMP" oasdiff
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Annotate HTTP contract changes
+        # Inline PR annotations for reviewers. The next step is the one that fails.
+        run: |
+          for spec in packages/*/openapi/openapi.json; do
+            [ -e "$spec" ] || continue
+            git cat-file -e "origin/${BASE_REF}:${spec}" 2>/dev/null || continue
+            oasdiff changelog "origin/${BASE_REF}:${spec}" "$spec" \
+              --format githubactions --allow-external-refs=false
+          done
+
+      - name: Check interface versions
+        run: pnpm run release-tools check --base "origin/${BASE_REF}"

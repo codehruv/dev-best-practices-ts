@@ -254,7 +254,7 @@ new Retrier(policy, deps?): Retrier;
 
 ###### Throws
 
-when the policy cannot produce a valid schedule.
+[InvalidRetryPolicyError](#invalidretrypolicyerror) when the policy cannot produce a valid schedule.
 
 #### Methods
 
@@ -288,11 +288,11 @@ Runs `operation` until it resolves or retrying stops.
 
 ###### Throws
 
-when attempts, the predicate, or the time budget stop retrying.
+[RetryExhaustedError](#retryexhaustederror) when attempts, the predicate, or the time budget stop retrying.
 
 ###### Throws
 
-when `signal` aborts before or between attempts.
+[RetryAbortedError](#retryabortederror) when `signal` aborts before or between attempts.
 
 ---
 

@@ -6,9 +6,11 @@ import type { Random, RetryPolicy } from './types.js';
  * dependency does not get hit by synchronized waves of retries.
  * See https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/.
  *
- * @param retryNumber 1 for the delay before the second attempt, 2 before the third, and so on.
- * @param shape The policy's base delay and cap.
- * @param random The jitter source.
+ * @public
+ *
+ * @param retryNumber - 1 for the delay before the second attempt, 2 before the third, and so on.
+ * @param shape - The policy's base delay and cap.
+ * @param random - The jitter source.
  *
  * @example Delays with the jitter pinned to its midpoint
  * {@includeCode ../tests/docs/reference/examples.test.ts#computeBackoffDelay}
