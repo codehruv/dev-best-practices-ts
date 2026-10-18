@@ -1,0 +1,6 @@
+* text=auto eol=lf
+
+# Lockfiles and generated code collapse in diffs and skip language stats.
+*.lock linguist-generated=true -diff
+pnpm-lock.yaml linguist-generated=true -diff
+**/generated/** linguist-generated=true

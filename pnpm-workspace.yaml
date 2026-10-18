@@ -1,0 +1,34 @@
+packages:
+  - packages/*
+
+# One version per dependency across the workspace. Packages reference these with
+# `"<name>": "catalog:"`, so a bump happens once, here.
+catalog:
+  '@eslint/js': ^10.0.1
+  '@types/node': ^22.20.4
+  '@vitest/coverage-v8': ^4.1.11
+  eslint: ^10.12.0
+  eslint-config-prettier: ^10.1.8
+  eslint-plugin-simple-import-sort: ^12.1.1
+  globals: ^16.5.0
+  jiti: ^2.6.1
+  knip: ^6.41.0
+  lefthook: ^2.2.1
+  prettier: ^3.9.8
+  turbo: ^2.11.2
+  typescript: ~5.9.3
+  typescript-eslint: ^8.70.0
+  vitest: ^4.1.11
+
+# A version must be public for 7 days (in minutes) before pnpm installs it.
+# Most malicious publishes are detected and yanked inside that window.
+minimumReleaseAge: 10080
+
+# Dependency install scripts are denied by default. Allow one package at a time
+# with `<name>: true` after reviewing what its script does.
+strictDepBuilds: true
+allowBuilds:
+  esbuild: false
+  lefthook: false
+
+engineStrict: true

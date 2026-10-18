@@ -1,0 +1,8 @@
+# Strings that must never appear in this repository: private names, internal
+# hostnames, employer or customer names. One case-insensitive regular expression
+# per line (Perl-compatible). A line starting with `!` excludes a git pathspec glob.
+# Prefix a pattern with (?-i) to make it case-sensitive. See
+# scripts/lint-banned-terms.sh.
+
+# The rule file names its own patterns, so it cannot scan itself.
+!.banned-terms

@@ -1,0 +1,37 @@
+{
+  "name": "dev-best-practices-ts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "TypeScript monorepo template with battle-tested engineering practices, linters, agent defaults, and automations.",
+  "packageManager": "pnpm@11.17.0",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "typecheck": "tsc -p tsconfig.json && turbo run typecheck",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "test": "turbo run test:unit",
+    "generate": "turbo run generate",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "deadcode": "knip"
+  },
+  "devDependencies": {
+    "@eslint/js": "catalog:",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "eslint-config-prettier": "catalog:",
+    "eslint-plugin-simple-import-sort": "catalog:",
+    "globals": "catalog:",
+    "jiti": "catalog:",
+    "knip": "catalog:",
+    "lefthook": "catalog:",
+    "prettier": "catalog:",
+    "turbo": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
+  }
+}

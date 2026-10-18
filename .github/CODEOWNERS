@@ -1,0 +1,8 @@
+# Every path has an owner. Later rules override earlier ones.
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+* @codehruv
+
+# Changes to the rules themselves need an owner's review.
+/AGENTS.md @codehruv
+/.github/ @codehruv

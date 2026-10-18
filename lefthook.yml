@@ -1,0 +1,24 @@
+# Fast local checks. CI runs the full `just verify`.
+# https://lefthook.dev/configuration/
+
+pre-commit:
+  parallel: true
+  jobs:
+    - name: secrets
+      run: gitleaks git --pre-commit --staged --redact --no-banner
+    - name: format
+      glob: '*.{ts,tsx,mts,cts,json,jsonc,md,yaml,yml}'
+      # Prettier rejects a symlink passed by name. CLAUDE.md links to AGENTS.md.
+      exclude: ['CLAUDE.md']
+      run: pnpm exec prettier --check --ignore-unknown {staged_files}
+    - name: lint
+      # ESLint resolves each file's nearest eslint.config.ts, so per-package configs apply.
+      glob: 'packages/**/*.ts'
+      run: pnpm exec eslint --max-warnings 0 {staged_files}
+    - name: banned-terms
+      run: bash scripts/lint-banned-terms.sh
+
+commit-msg:
+  jobs:
+    - name: conventional-commit
+      run: bash scripts/check-commit-msg.sh {1}
