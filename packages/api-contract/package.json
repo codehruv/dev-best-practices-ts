@@ -31,6 +31,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@amiceli/vitest-cucumber": "catalog:",
     "@dbp/docs-gen": "workspace:*",
     "@microsoft/api-extractor": "catalog:",
     "@types/node": "catalog:",

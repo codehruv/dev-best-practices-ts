@@ -1,5 +1,5 @@
 /**
- * Thrown when a doc test file breaks the conventions the generator relies on. The
+ * Thrown when a doc test or feature file breaks the conventions the generator relies on. The
  * message starts with `file:line:column`, so editors and CI logs link straight to it.
  */
 export class DocTestSyntaxError extends Error {

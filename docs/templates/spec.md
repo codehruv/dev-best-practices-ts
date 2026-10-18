@@ -30,7 +30,7 @@ Keywords follow [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119) and [RFC 8174
 
 ## Acceptance Criteria
 
-One or more scenarios per requirement, in Given/When/Then. Each scenario becomes at least one test whose name starts with the requirement ID, and doc tests render them into the documentation ([`../reference/documentation.md`](../reference/documentation.md)).
+One or more scenarios per requirement, in Given/When/Then. Each scenario moves into the implementing package as a Gherkin scenario in `features/<name>.feature`, tagged with its requirement ID (`@REQ-001`). Step definitions run it as a test, and the generated specification page links each requirement ID to its scenarios ([`../reference/documentation.md`](../reference/documentation.md#specifications-from-gherkin-features)).
 
 ### REQ-001
 

@@ -4,9 +4,15 @@ import { join, relative, resolve } from 'node:path';
 import { format, resolveConfig } from 'prettier';
 
 import { parseDocTest } from './parse-doc-test.ts';
+import { parseFeature } from './parse-feature.ts';
+import { renderFeaturePage } from './render-feature.ts';
 import { type PageLink, renderIndex, renderPage, stampGenerated } from './render-markdown.ts';
+import { FEATURE_DIR, FEATURE_TEST_DIR, featureTestFile, listFeatures } from './trace.ts';
 
-/** The quadrants generated from doc tests. Reference comes from TypeDoc, explanation is hand-written. */
+/**
+ * The quadrants generated from doc tests. Reference comes from TypeDoc and the feature
+ * files, explanation is hand-written.
+ */
 const PAGE_QUADRANTS = ['tutorials', 'how-to'] as const;
 const DOC_TEST_SUFFIX = '.test.ts';
 
@@ -16,6 +22,8 @@ const DOC_TEST_SUFFIX = '.test.ts';
  * - `docs/tutorials/` and `docs/how-to/` from the doc tests in `tests/docs/`. Both
  *   directories are wiped first, so a deleted doc test deletes its page.
  * - The generated header on every TypeDoc page in `docs/reference/`. Run TypeDoc first.
+ * - `docs/reference/specifications/` from the Gherkin files in `features/`, wiped first
+ *   like the doc test quadrants.
  * - `docs/README.md`, the index of all four quadrants. `docs/explanation/` is hand-written
  *   and only read, for page titles.
  *
@@ -62,6 +70,29 @@ export async function generateDocs(packageDir: string): Promise<string[]> {
     await write(path, stampGenerated(readFileSync(path, 'utf8'), 'src/ TSDoc comments by TypeDoc'));
   }
 
+  const specificationDir = join(referenceDir, 'specifications');
+  rmSync(specificationDir, { recursive: true, force: true });
+  const specifications: PageLink[] = [];
+  for (const featureFile of listFeatures(join(root, FEATURE_DIR))) {
+    mkdirSync(specificationDir, { recursive: true });
+    const featurePath = join(root, FEATURE_DIR, featureFile);
+    const sourcePath = relative(root, featurePath);
+    const page = parseFeature(readFileSync(featurePath, 'utf8'), sourcePath);
+    const pageFile = `${featureFile.slice(0, -'.feature'.length)}.md`;
+    await write(
+      join(specificationDir, pageFile),
+      renderFeaturePage(page, {
+        path: sourcePath,
+        link: relative(specificationDir, featurePath),
+        testLink: relative(
+          specificationDir,
+          join(root, FEATURE_TEST_DIR, featureTestFile(featureFile)),
+        ),
+      }),
+    );
+    specifications.push({ title: page.title, href: `reference/specifications/${pageFile}` });
+  }
+
   const explanationDir = join(docsDir, 'explanation');
   const explanation = listFiles(explanationDir, '.md').map((file) => ({
     title: firstHeading(readFileSync(join(explanationDir, file), 'utf8')) ?? file,
@@ -77,9 +108,12 @@ export async function generateDocs(packageDir: string): Promise<string[]> {
       description,
       tutorials: quadrantLinks.tutorials,
       howTo: quadrantLinks['how-to'],
-      ...(existsSync(join(referenceDir, 'README.md'))
-        ? { reference: { title: 'API reference', href: 'reference/README.md' } }
-        : {}),
+      reference: [
+        ...(existsSync(join(referenceDir, 'README.md'))
+          ? [{ title: 'API reference', href: 'reference/README.md' }]
+          : []),
+        ...specifications,
+      ],
       explanation,
     }),
   );

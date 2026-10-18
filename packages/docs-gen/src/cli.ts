@@ -6,14 +6,16 @@ import process from 'node:process';
 
 import { checkDocs } from './check-docs.ts';
 import { generateDocs } from './generate.ts';
+import { traceRequirements } from './trace.ts';
 
 const USAGE = `Usage: dbp-docs-gen <command>
 
 Run from a package root.
 
 Commands:
-  generate   Write docs/ from tests/docs/ and stamp TypeDoc output. Run TypeDoc first.
-  check      Fail on undocumented exports, broken links, or Diátaxis violations.
+  generate   Write docs/ from tests/docs/ and features/, and stamp TypeDoc output. Run TypeDoc first.
+  check      Fail on undocumented exports, broken links, Diátaxis violations, or traceability problems.
+  trace      Print which feature scenarios verify each requirement ID.
 `;
 
 async function main(command: string | undefined): Promise<number> {
@@ -33,12 +35,27 @@ async function main(command: string | undefined): Promise<number> {
       printSection('Broken @example includes', coverage.brokenExamples);
       printSection('Broken links', report.brokenLinks);
       printSection('Diátaxis violations', report.compliance);
+      printSection('Traceability problems', report.traceability.problems);
       const documented = coverage.exports.length - coverage.undocumented.length;
       process.stdout.write(
         `docs-gen: ${documented}/${coverage.exports.length} exports documented, ` +
-          `${report.brokenLinks.length} broken link(s), ${report.compliance.length} Diátaxis violation(s)\n`,
+          `${report.brokenLinks.length} broken link(s), ${report.compliance.length} Diátaxis violation(s), ` +
+          `${Object.keys(report.traceability.requirements).length} requirement(s) traced, ` +
+          `${report.traceability.problems.length} traceability problem(s)\n`,
       );
       return report.passed ? 0 : 1;
+    }
+    case 'trace': {
+      const report = traceRequirements(process.cwd());
+      const ids = Object.keys(report.requirements).sort((a, b) =>
+        a.localeCompare(b, 'en', { numeric: true }),
+      );
+      for (const id of ids) {
+        const scenarios = report.requirements[id] ?? [];
+        process.stdout.write(`${id}\n${scenarios.map((scenario) => `  ${scenario}\n`).join('')}`);
+      }
+      printSection('Traceability problems', report.problems);
+      return report.problems.length === 0 ? 0 : 1;
     }
     default:
       process.stderr.write(USAGE);

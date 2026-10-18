@@ -6,7 +6,7 @@
 
 ### DocTestSyntaxError
 
-Thrown when a doc test file breaks the conventions the generator relies on. The
+Thrown when a doc test or feature file breaks the conventions the generator relies on. The
 message starts with `file:line:column`, so editors and CI logs link straight to it.
 
 #### Extends
@@ -408,7 +408,15 @@ Which exports lack executable documentation.
 readonly passed: boolean;
 ```
 
-True only when coverage, links, and Diátaxis compliance all have no problems.
+True only when coverage, links, Diátaxis compliance, and traceability have no problems.
+
+##### traceability
+
+```ts
+readonly traceability: TraceReport;
+```
+
+Which feature scenarios verify each requirement, and every traceability problem.
 
 ---
 
@@ -462,6 +470,30 @@ readonly path: string;
 
 Path relative to the package root, shown in the generated header.
 
+---
+
+### TraceReport
+
+Which scenarios verify each requirement, and every traceability problem in a package.
+
+#### Properties
+
+##### problems
+
+```ts
+readonly problems: readonly string[];
+```
+
+Malformed or duplicate tags, untraced or skipped scenarios, and features no test runs.
+
+##### requirements
+
+```ts
+readonly requirements: Readonly<Record<string, readonly string[]>>;
+```
+
+Requirement ID to the scenarios that verify it, each as `features/<file>: <title>`.
+
 ## Functions
 
 ### checkDocs()
@@ -470,8 +502,8 @@ Path relative to the package root, shown in the generated header.
 function checkDocs(packageDir): DocsReport;
 ```
 
-Runs every documentation check on one package: export coverage, link integrity, and
-Diátaxis compliance. Each problem names the file or export it is about, so the report
+Runs every documentation check on one package: export coverage, link integrity,
+Diátaxis compliance, and requirement traceability through the feature files. Each problem names the file or export it is about, so the report
 is a to-do list rather than a score.
 
 #### Parameters
@@ -497,6 +529,8 @@ Writes the generated documentation of one package into `docs/`:
 - `docs/tutorials/` and `docs/how-to/` from the doc tests in `tests/docs/`. Both
   directories are wiped first, so a deleted doc test deletes its page.
 - The generated header on every TypeDoc page in `docs/reference/`. Run TypeDoc first.
+- `docs/reference/specifications/` from the Gherkin files in `features/`, wiped first
+  like the doc test quadrants.
 - `docs/README.md`, the index of all four quadrants. `docs/explanation/` is hand-written
   and only read, for page titles.
 

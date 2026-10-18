@@ -5,10 +5,13 @@ packages:
 # One version per dependency across the workspace. Packages reference these with
 # `"<name>": "catalog:"`, so a bump happens once, here.
 catalog:
+  '@amiceli/vitest-cucumber': ^7.0.0
   '@asteasolutions/zod-to-openapi': ^9.1.0
   '@changesets/cli': ^3.0.3
   '@changesets/get-release-plan': ^5.0.2
   '@microsoft/api-extractor': ^7.59.4
+  '@cucumber/gherkin': ^42.0.1
+  '@cucumber/messages': ^34.2.1
   '@eslint/js': ^10.0.1
   '@types/node': ^22.20.4
   '@vitest/coverage-v8': ^4.1.11

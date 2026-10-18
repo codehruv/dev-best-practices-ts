@@ -17,6 +17,9 @@ Read `docs/reference/documentation.md` first. Then:
       `tests/docs/reference/examples.test.ts`, plus `@example Title` and
       `{@includeCode ../tests/docs/reference/examples.test.ts#Name}` in its TSDoc.
    4. A design decision users question: a hand-written page in `docs/explanation/`.
+   5. An acceptance criterion from a spec: a scenario in `features/<name>.feature` tagged
+      `@REQ-NNN`, with steps in `tests/features/<name>.feature.test.ts`. Use the step text
+      verbatim in `Given`/`When`/`Then`, and load the feature by absolute path.
 3. **Write the doc test.** File JSDoc is the intro, `describe` is the title, each `it` is a
    section with JSDoc prose above it. Put the reader-facing code in
    `// #region name` ... `// #endregion name`, and the assertions after `#endregion`.
@@ -26,7 +29,8 @@ Read `docs/reference/documentation.md` first. Then:
    - Teach in tutorials, instruct in how-to guides, describe in reference, discuss in
      explanation. Never mix them on one page.
 4. **Never edit generated pages** (`docs/tutorials/`, `docs/how-to/`, `docs/reference/`,
-   `docs/README.md`). Change the doc test or the TSDoc, then run `just generate`.
+   `docs/README.md`). Change the doc test, the TSDoc, or the feature, then run
+   `just generate`.
 5. **Verify.** Run `just generate`, then `just verify`. Both must pass, and the generated
    pages are committed with the tests that produce them.
 6. **Report** which exports, tasks, and pages you documented, and the final

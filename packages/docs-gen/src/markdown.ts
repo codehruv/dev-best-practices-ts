@@ -67,6 +67,15 @@ export function outlineMarkdown(markdown: string): MarkdownOutline {
 }
 
 /**
+ * The anchors GitHub gives a page's headings, in document order. Generators that link to
+ * their own headings use this, so the links and the link check agree on every anchor.
+ */
+export function headingAnchors(headings: readonly string[]): string[] {
+  const counts = new Map<string, number>();
+  return headings.map((heading) => uniqueSlug(slugify(heading), counts));
+}
+
+/**
  * GitHub's heading anchor algorithm: lowercase, drop punctuation except `-` and `_`, and
  * turn spaces into `-`. Links must match what GitHub renders, because that is where
  * readers click them.

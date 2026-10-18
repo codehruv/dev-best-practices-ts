@@ -18,13 +18,14 @@ Every code sample in the docs runs as a test, so a sample can only be wrong if i
 wrong. `@dbp/docs-gen` (`packages/docs-gen`) renders the pages, and `just verify` fails when
 they are incomplete or broken.
 
-| Quadrant      | Source                                   | Output                   | Generated? |
-| ------------- | ---------------------------------------- | ------------------------ | ---------- |
-| Tutorials     | `tests/docs/tutorials/NN-slug.test.ts`   | `docs/tutorials/slug.md` | Fully      |
-| How-to guides | `tests/docs/how-to/NN-slug.test.ts`      | `docs/how-to/slug.md`    | Fully      |
-| Reference     | TSDoc in `src/`, examples from doc tests | `docs/reference/`        | Fully      |
-| Explanation   | `docs/explanation/*.md`                  | Same file                | No         |
-| Index         | All of the above                         | `docs/README.md`         | Fully      |
+| Quadrant      | Source                                   | Output                           | Generated? |
+| ------------- | ---------------------------------------- | -------------------------------- | ---------- |
+| Tutorials     | `tests/docs/tutorials/NN-slug.test.ts`   | `docs/tutorials/slug.md`         | Fully      |
+| How-to guides | `tests/docs/how-to/NN-slug.test.ts`      | `docs/how-to/slug.md`            | Fully      |
+| Reference     | TSDoc in `src/`, examples from doc tests | `docs/reference/`                | Fully      |
+| Reference     | `features/*.feature` (Gherkin)           | `docs/reference/specifications/` | Fully      |
+| Explanation   | `docs/explanation/*.md`                  | Same file                        | No         |
+| Index         | All of the above                         | `docs/README.md`                 | Fully      |
 
 **Explanation is hand-written on purpose.** It discusses design and trade-offs, and there is
 no behavior to execute. The checks still verify its links and keep it in its quadrant.
@@ -78,6 +79,41 @@ treats every warning as an error, requires documentation on every exported membe
 only a fixed list of block tags, and disables source links, which point at files readers
 cannot open.
 
+### Specifications From Gherkin Features
+
+A spec's acceptance criteria live in `features/<name>.feature` as Gherkin scenarios, and
+[vitest-cucumber](https://vitest-cucumber.miceli.click/) runs them as tests from step
+definitions in `tests/features/<name>.feature.test.ts`. The generator parses each feature
+with the official [`@cucumber/gherkin`](https://github.com/cucumber/gherkin) parser and
+renders it to `docs/reference/specifications/<name>.md`.
+
+**Features are reference, not how-to guides.** A scenario states what the package does
+under given conditions, as a fact a reader looks up ("does a predicate rejection still
+count as an attempt?"). It does not walk the reader through a task, and its steps show no
+code, so it cannot teach either. That is the austere, complete, lookup-oriented content
+the reference quadrant holds.
+
+| In the feature file                         | On the page                                |
+| ------------------------------------------- | ------------------------------------------ |
+| `Feature:` title and description            | Page title and intro                       |
+| `@REQ-NNN` tags on scenarios or the feature | A requirements table, ID to scenarios      |
+| `Background:`                               | A section of shared steps                  |
+| Each `Scenario:` or `Scenario Outline:`     | A section, with "Verifies `REQ-NNN`" links |
+| Steps, doc strings, and data tables         | A list of steps with their arguments       |
+| `Examples:` tables                          | Tables after the steps                     |
+
+Each requirement ID gets an anchor (`specifications/retry.md#req-003`), so a spec, PR, or
+issue links straight to the scenarios that verify it.
+
+vitest-cucumber fails the run when a scenario or step in the feature has no
+implementation, or when a step's text or keyword differs from the feature. Load the feature
+with an absolute path (`fileURLToPath(new URL('../../features/x.feature', import.meta.url))`),
+because `loadFeature` cannot resolve relative paths under top-level await.
+
+Feature steps do not count toward export coverage. A step definition imports the package,
+but the page shows the step text, not the code, so a reader still has no tested sample of
+the export.
+
 ## Priority Order
 
 Write documentation in this order. Each step is worth more to a reader than the next, so a
@@ -109,16 +145,22 @@ The numeric prefixes of doc test files encode this order.
   generated pages, and explanation holds only hand-written ones. Each quadrant rejects
   content that belongs to another: a tutorial with a migration section, a how-to titled
   "Why ...", or an explanation with more than two code blocks.
+- **Traceability problems.** Every scenario names at least one requirement (`@REQ-` and
+  three or more digits), on itself or its feature. A near-miss tag such as `@req-1`, a tag
+  repeated on one scenario, two scenarios with one title (step definitions bind by title),
+  and a skip or focus tag (`@ignore`, `@skip`, `@only`, `@wip`) all fail. So does a feature
+  with no `tests/features/<name>.feature.test.ts` that loads it, which no test would run.
 
 `just freshness` (CI) regenerates everything and fails if any committed page differs.
 
 ## Commands
 
-| Command           | What it does                                                      |
-| ----------------- | ----------------------------------------------------------------- |
-| `just generate`   | Runs TypeDoc, then renders pages and the index for every package. |
-| `just docs-check` | Coverage, link, and Diátaxis checks.                              |
-| `just freshness`  | Fails when committed docs differ from a fresh generation (CI).    |
+| Command              | What it does                                                       |
+| -------------------- | ------------------------------------------------------------------ |
+| `just generate`      | Runs TypeDoc, then renders pages and the index for every package.  |
+| `just docs-check`    | Coverage, link, Diátaxis, and traceability checks.                 |
+| `dbp-docs-gen trace` | From a package root, prints each requirement ID and its scenarios. |
+| `just freshness`     | Fails when committed docs differ from a fresh generation (CI).     |
 
 ## Adding Docs to a Package
 
@@ -128,6 +170,8 @@ The numeric prefixes of doc test files encode this order.
    `"docs:check": "dbp-docs-gen check"`.
 4. Map the package name to `./src/index.ts` in `tsconfig.json` `paths` and in the Vitest `alias`.
 5. Write doc tests in the priority order above, then run `just generate` and `just verify`.
+6. For acceptance criteria, add `@amiceli/vitest-cucumber` as a `catalog:` dev dependency
+   and write `features/<name>.feature` plus `tests/features/<name>.feature.test.ts`.
 
 ## Extending to Other Sources
 
