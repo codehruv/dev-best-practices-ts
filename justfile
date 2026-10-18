@@ -17,7 +17,7 @@ setup:
     pnpm exec lefthook install
 
 # Run every check CI runs.
-verify: fmt-check lint deadcode banned-terms typecheck test
+verify: fmt-check lint deadcode banned-terms typecheck test docs-check
 
 # Apply linter then formatter fixes, then verify. Lint fixes run first because they can
 # leave code the formatter has to reflow.
@@ -55,6 +55,10 @@ typecheck:
 # Run unit tests.
 test:
     pnpm run test {{ turbo_flags }}
+
+# Fail on undocumented exports, broken doc links, or Diátaxis violations.
+docs-check:
+    pnpm run docs:check {{ turbo_flags }}
 
 # Find unused files, exports, and dependencies.
 deadcode:

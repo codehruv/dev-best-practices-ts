@@ -20,12 +20,17 @@
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix .",
     "test:unit": "vitest run",
-    "clean": "rm -rf dist coverage"
+    "clean": "rm -rf dist coverage",
+    "generate": "typedoc && dbp-docs-gen generate",
+    "docs:check": "dbp-docs-gen check"
   },
   "devDependencies": {
+    "@dbp/docs-gen": "workspace:*",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "eslint": "catalog:",
+    "typedoc": "catalog:",
+    "typedoc-plugin-markdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }

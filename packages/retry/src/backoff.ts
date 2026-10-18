@@ -1,10 +1,4 @@
-import type { Random } from './types.js';
-
-/** The policy fields that shape a delay. */
-interface BackoffShape {
-  readonly baseDelayMs: number;
-  readonly maxDelayMs: number;
-}
+import type { Random, RetryPolicy } from './types.js';
 
 /**
  * Exponential backoff with full jitter: a uniform pick in [0, min(cap, base * 2^(n-1))).
@@ -13,10 +7,15 @@ interface BackoffShape {
  * See https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/.
  *
  * @param retryNumber 1 for the delay before the second attempt, 2 before the third, and so on.
+ * @param shape The policy's base delay and cap.
+ * @param random The jitter source.
+ *
+ * @example Delays with the jitter pinned to its midpoint
+ * {@includeCode ../tests/docs/reference/examples.test.ts#computeBackoffDelay}
  */
 export function computeBackoffDelay(
   retryNumber: number,
-  shape: BackoffShape,
+  shape: Pick<RetryPolicy, 'baseDelayMs' | 'maxDelayMs'>,
   random: Random,
 ): number {
   const ceiling = Math.min(shape.maxDelayMs, shape.baseDelayMs * 2 ** (retryNumber - 1));
