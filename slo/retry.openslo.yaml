@@ -1,0 +1,165 @@
+# Performance SLOs for @dbp/retry, measured by packages/retry/tests/bench/retry.bench.ts.
+#
+# A benchmark SLO is evaluated once per benchmark run, so `timeWindow` is nominal (OpenSLO
+# requires one). An objective `op: lte, value: V, target: T` reads "a fraction T of
+# operations take at most V": target 0.99 checks the p99. Error budget is the 1 - T
+# fraction of operations allowed to miss.
+#
+# Objectives sit 6-8x above measurements on a developer laptop, so slower CI runners pass
+# and only a real regression fails. The committed baseline in slo/baselines catches
+# smaller slowdowns on the machine that recorded it. See docs/reference/slo.md.
+
+apiVersion: openslo/v1
+kind: Service
+metadata:
+  name: retry-library
+  displayName: '@dbp/retry'
+spec:
+  description: Retries transient async failures with capped exponential backoff and full jitter. Runs on the caller's hot path, so its own overhead must stay negligible next to the operation it retries.
+---
+apiVersion: openslo/v1
+kind: SLI
+metadata:
+  name: retry-delay-latency
+  displayName: Backoff delay computation latency
+spec:
+  description: Nanoseconds to compute one jittered backoff delay with computeBackoffDelay. Measured as the iteration time of a 1000-call batch, divided by 1000.
+  thresholdMetric:
+    metricSource:
+      type: vitest-bench
+      spec:
+        package: retry
+        benchmark: tests/bench/retry.bench.ts > computeBackoffDelay > 1000 delays across retries 1-10
+        batchSize: 1000
+        unit: ns
+---
+apiVersion: openslo/v1
+kind: SLI
+metadata:
+  name: retry-delay-throughput
+  displayName: Backoff delay computation throughput
+spec:
+  description: Backoff delays computed per second by one thread, from the same benchmark as retry-delay-latency.
+  thresholdMetric:
+    metricSource:
+      type: vitest-bench
+      spec:
+        package: retry
+        benchmark: tests/bench/retry.bench.ts > computeBackoffDelay > 1000 delays across retries 1-10
+        batchSize: 1000
+        unit: ops/s
+---
+apiVersion: openslo/v1
+kind: SLI
+metadata:
+  name: retry-run-overhead
+  displayName: Retrier.run overhead without retries
+spec:
+  description: Microseconds Retrier.run adds around an operation that succeeds on the first attempt. The operation resolves immediately, so the whole time is retrier overhead. Measured as a 100-run batch, divided by 100.
+  thresholdMetric:
+    metricSource:
+      type: vitest-bench
+      spec:
+        package: retry
+        benchmark: tests/bench/retry.bench.ts > Retrier.run > 100 runs that succeed on the first attempt
+        batchSize: 100
+        unit: us
+---
+apiVersion: openslo/v1
+kind: SLI
+metadata:
+  name: retry-scheduling-overhead
+  displayName: Retrier.run overhead with three retries
+spec:
+  description: Microseconds Retrier.run spends scheduling three retries before a success, with an instant sleeper and clock. Covers error handling, delay computation, and policy checks per retry. Measured as a 100-run batch, divided by 100.
+  thresholdMetric:
+    metricSource:
+      type: vitest-bench
+      spec:
+        package: retry
+        benchmark: tests/bench/retry.bench.ts > Retrier.run > 100 runs that succeed after 3 retries
+        batchSize: 100
+        unit: us
+---
+apiVersion: openslo/v1
+kind: SLO
+metadata:
+  name: retry-delay-latency
+  displayName: Backoff delays stay sub-microsecond
+spec:
+  description: Callers compute a delay on every retry, so it must stay far below a microsecond.
+  service: retry-library
+  indicatorRef: retry-delay-latency
+  budgetingMethod: Occurrences
+  timeWindow:
+    - duration: 1d
+      isRolling: true
+  objectives:
+    - displayName: p99 delay computation
+      op: lte
+      value: 500
+      target: 0.99
+---
+apiVersion: openslo/v1
+kind: SLO
+metadata:
+  name: retry-delay-throughput
+  displayName: Backoff delay throughput
+spec:
+  description: A single thread computes millions of delays per second, so retry storms are never bottlenecked on scheduling.
+  service: retry-library
+  indicatorRef: retry-delay-throughput
+  budgetingMethod: Occurrences
+  timeWindow:
+    - duration: 1d
+      isRolling: true
+  objectives:
+    - displayName: median throughput
+      op: gte
+      value: 2000000
+      target: 0.5
+---
+apiVersion: openslo/v1
+kind: SLO
+metadata:
+  name: retry-run-overhead
+  displayName: Retrier.run adds negligible latency
+spec:
+  description: Wrapping a call in Retrier.run costs almost nothing when the call succeeds, which is the common case.
+  service: retry-library
+  indicatorRef: retry-run-overhead
+  budgetingMethod: Occurrences
+  timeWindow:
+    - duration: 1d
+      isRolling: true
+  objectives:
+    - displayName: median overhead
+      op: lte
+      value: 1
+      target: 0.5
+    - displayName: p99 overhead
+      op: lte
+      value: 5
+      target: 0.99
+---
+apiVersion: openslo/v1
+kind: SLO
+metadata:
+  name: retry-scheduling-overhead
+  displayName: Retry scheduling stays cheap
+  annotations:
+    # Promise rejection and catch paths vary more between runs than the success path.
+    dev-best-practices/regression-threshold: '0.3'
+spec:
+  description: Scheduling a retry costs microseconds, negligible next to any real backoff delay.
+  service: retry-library
+  indicatorRef: retry-scheduling-overhead
+  budgetingMethod: Occurrences
+  timeWindow:
+    - duration: 1d
+      isRolling: true
+  objectives:
+    - displayName: p99 overhead for 3 retries
+      op: lte
+      value: 40
+      target: 0.99

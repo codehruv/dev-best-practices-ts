@@ -20,6 +20,7 @@
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix .",
     "test:unit": "vitest run",
+    "bench": "vitest bench --run --no-file-parallelism",
     "clean": "rm -rf dist coverage"
   },
   "devDependencies": {

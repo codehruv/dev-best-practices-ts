@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "environments": [
+    {
+      "environment": {
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpuModel": "Apple M2 Pro",
+        "nodeMajor": 22
+      },
+      "recordedAt": "2026-10-18T22:58:04.960Z",
+      "medianNsPerOp": {
+        "retry-delay-latency/0": 70.63,
+        "retry-delay-throughput/0": 70.63,
+        "retry-run-overhead/0": 119.6,
+        "retry-run-overhead/1": 119.6,
+        "retry-scheduling-overhead/0": 2364
+      }
+    }
+  ]
+}

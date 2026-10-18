@@ -51,6 +51,12 @@ catalogs:
     vitest:
       specifier: ^4.1.11
       version: 4.1.11
+    yaml:
+      specifier: ^2.9.1
+      version: 2.9.1
+    zod:
+      specifier: ^4.6.5
+      version: 4.6.6
 
 importers:
 
@@ -97,6 +103,31 @@ importers:
         version: 8.71.1(eslint@10.12.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3)
 
   packages/retry:
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.20.5
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 4.1.11(vitest@4.1.11)
+      eslint:
+        specifier: 'catalog:'
+        version: 10.12.0(jiti@2.7.0)(supports-color@7.2.0)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@types/node@22.20.5)(@vitest/coverage-v8@4.1.11)(vite@8.3.4(@types/node@22.20.5)(jiti@2.7.0)(yaml@2.9.1))
+
+  packages/slo:
+    dependencies:
+      yaml:
+        specifier: 'catalog:'
+        version: 2.9.1
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.6
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
