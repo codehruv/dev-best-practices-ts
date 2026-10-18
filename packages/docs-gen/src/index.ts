@@ -11,3 +11,4 @@ export { type CoverageReport } from './coverage.ts';
 export { generateDocs } from './generate.ts';
 export { parseDocTest } from './parse-doc-test.ts';
 export { type PageSource, renderPage } from './render-markdown.ts';
+export { type TraceReport } from './trace.ts';

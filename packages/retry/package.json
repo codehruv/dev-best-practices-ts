@@ -26,6 +26,7 @@
     "docs:check": "dbp-docs-gen check"
   },
   "devDependencies": {
+    "@amiceli/vitest-cucumber": "catalog:",
     "@dbp/docs-gen": "workspace:*",
     "@microsoft/api-extractor": "catalog:",
     "@types/node": "catalog:",

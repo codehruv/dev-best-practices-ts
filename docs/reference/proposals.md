@@ -142,7 +142,7 @@ Task durations follow a heavy-tailed (lognormal) distribution, and a gut estimat
 The spec is the hub that keeps the other artifacts honest.
 
 - **Tests.** Every acceptance criterion becomes at least one test whose name cites the requirement ID (`REQ-003: aborts the pending sleep when the signal fires`). A requirement with no test is not done.
-- **Docs.** Acceptance criteria written in Given/When/Then become doc tests, and the documentation is generated from them. See [`documentation.md`](documentation.md).
+- **Docs.** Acceptance criteria become Gherkin scenarios in the package's `features/*.feature`, tagged with their requirement IDs. They run as tests, and the generated specification page links each ID to its scenarios. See [`documentation.md`](documentation.md#specifications-from-gherkin-features).
 - **Versions.** The spec's interface section states the SemVer impact on every public interface it touches. See [`versioning.md`](versioning.md) and [`schema-evolution.md`](schema-evolution.md).
 - **SLOs.** The spec's SLO section names every objective the change adds or affects, with targets that benchmarks verify. See [`slo.md`](slo.md).
 

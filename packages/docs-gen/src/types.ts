@@ -33,3 +33,46 @@ export interface DocPage {
   /** One per `it()` or `test()` inside the `describe()`, in source order. */
   readonly sections: readonly DocSection[];
 }
+
+/** One step of a Gherkin scenario, rendered as a line of the specification page. */
+export interface FeatureStep {
+  /** The keyword as written, such as `Given` or `And`, without trailing space. */
+  readonly keyword: string;
+  readonly text: string;
+  /** The step's doc string argument, or undefined when it has none. */
+  readonly docString: string | undefined;
+  /** The step's data table argument, one array per row. Empty when it has none. */
+  readonly table: readonly (readonly string[])[];
+}
+
+/** One `Examples:` table of a Scenario Outline. */
+interface FeatureExamples {
+  readonly title: string;
+  readonly header: readonly string[];
+  readonly rows: readonly (readonly string[])[];
+}
+
+/** One `Scenario` or `Scenario Outline`, rendered as a section of the specification page. */
+export interface FeatureScenario {
+  readonly title: string;
+  readonly description: string;
+  /** Tag names without the leading `@`, in source order. */
+  readonly tags: readonly string[];
+  /** 1-based line of the `Scenario` keyword, for error messages. */
+  readonly line: number;
+  readonly steps: readonly FeatureStep[];
+  readonly examples: readonly FeatureExamples[];
+}
+
+/**
+ * A `.feature` file parsed into a specification page. The page lists the same scenarios
+ * the step definitions run, so a passing feature test proves every listed criterion.
+ */
+export interface FeaturePage {
+  readonly title: string;
+  readonly description: string;
+  /** Feature-level tag names without the leading `@`. Every scenario inherits them. */
+  readonly tags: readonly string[];
+  readonly background: readonly FeatureStep[];
+  readonly scenarios: readonly FeatureScenario[];
+}

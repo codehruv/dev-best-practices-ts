@@ -31,6 +31,8 @@
     "docs:check": "node src/cli.ts check"
   },
   "dependencies": {
+    "@cucumber/gherkin": "catalog:",
+    "@cucumber/messages": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"
   },

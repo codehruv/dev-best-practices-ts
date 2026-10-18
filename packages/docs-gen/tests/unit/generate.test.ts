@@ -64,6 +64,29 @@ describe('generateDocs', () => {
     );
   });
 
+  it('writes a specification page per feature, links it under Reference, and drops stale ones', async () => {
+    const fixture = makePackage({
+      'docs/reference/README.md': '# API\n',
+      'docs/reference/specifications/removed.md': 'stale',
+      'features/greet.feature':
+        'Feature: Greet people\n\n  @REQ-001\n  Scenario: Greet\n    Given a\n',
+    });
+
+    const written = await generateDocs(fixture.dir);
+
+    expect(written).toContain('docs/reference/specifications/greet.md');
+    expect(existsSync(join(fixture.dir, 'docs/reference/specifications/removed.md'))).toBe(false);
+    const page = readFileSync(join(fixture.dir, 'docs/reference/specifications/greet.md'), 'utf8');
+    expect(page).toContain('# Greet people');
+    expect(page).toContain(
+      '[`greet.feature.test.ts`](../../../tests/features/greet.feature.test.ts)',
+    );
+    const index = readFileSync(join(fixture.dir, 'docs/README.md'), 'utf8');
+    expect(index).toContain(
+      '- [API reference](reference/README.md)\n- [Greet people](reference/specifications/greet.md)',
+    );
+  });
+
   it('is deterministic', async () => {
     const fixture = makePackage({ 'tests/docs/tutorials/01-start.test.ts': step });
 

@@ -72,7 +72,7 @@ Unit tests are fast and deterministic and run on every change. Integration tests
 
 ## Documentation
 
-Package docs follow Diátaxis (tutorials, how-to guides, reference, explanation) and are generated from executable doc tests in `tests/docs/`, so every sample runs as a test. Never edit generated pages. Change the doc test or TSDoc and run `just generate`. `just verify` fails on any undocumented export, broken link, or Diátaxis violation. Full rules: [`docs/reference/documentation.md`](docs/reference/documentation.md).
+Package docs follow Diátaxis (tutorials, how-to guides, reference, explanation) and are generated from executable doc tests in `tests/docs/`, so every sample runs as a test. Never edit generated pages. Change the doc test or TSDoc and run `just generate`. `just verify` fails on any undocumented export, broken link, or Diátaxis violation. Acceptance criteria live in `features/*.feature` as Gherkin scenarios tagged `@REQ-NNN`, run by vitest-cucumber and rendered as reference pages. Every scenario must name a requirement, and none may be skipped. Full rules: [`docs/reference/documentation.md`](docs/reference/documentation.md).
 
 ## Observability
 

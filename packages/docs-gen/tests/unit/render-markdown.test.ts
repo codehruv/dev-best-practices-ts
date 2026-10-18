@@ -41,6 +41,7 @@ describe('renderIndex', () => {
       description: 'Does things.',
       tutorials: [{ title: 'Start', href: 'tutorials/start.md' }],
       howTo: [],
+      reference: [],
       explanation: [],
     });
 
