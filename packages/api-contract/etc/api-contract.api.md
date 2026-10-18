@@ -10,7 +10,7 @@ import { z } from 'zod';
 // @public
 export function buildOpenApiDocument(version: string): OpenApiDocument;
 
-// @public (undocumented)
+// @public
 export type CreateNoteRequest = z.input<typeof CreateNoteRequestSchema>;
 
 // @public
@@ -19,7 +19,7 @@ export const CreateNoteRequestSchema: z.ZodObject<{
     body: z.ZodDefault<z.ZodString>;
 }, z.core.$strict>;
 
-// @public (undocumented)
+// @public
 export type ErrorResponse = z.infer<typeof ErrorResponseSchema>;
 
 // @public
@@ -31,7 +31,7 @@ export const ErrorResponseSchema: z.ZodObject<{
     }, z.core.$strict>;
 }, z.core.$strict>;
 
-// @public (undocumented)
+// @public
 export type ListNotesQuery = z.input<typeof ListNotesQuerySchema>;
 
 // @public
@@ -40,7 +40,7 @@ export const ListNotesQuerySchema: z.ZodObject<{
     limit: z.ZodDefault<z.ZodCoercedNumber<unknown>>;
 }, z.core.$strict>;
 
-// @public (undocumented)
+// @public
 export type ListNotesResponse = z.infer<typeof ListNotesResponseSchema>;
 
 // @public
@@ -60,10 +60,10 @@ export const ListNotesResponseSchema: z.ZodObject<{
     }, z.core.$strict>;
 }, z.core.$strict>;
 
-// @public (undocumented)
+// @public
 export type Note = z.infer<typeof NoteSchema>;
 
-// @public (undocumented)
+// @public
 export type NoteResponse = z.infer<typeof NoteResponseSchema>;
 
 // @public
@@ -89,7 +89,7 @@ export const NoteSchema: z.ZodObject<{
 // @public
 export type OpenApiDocument = ReturnType<OpenApiGeneratorV31['generateDocument']>;
 
-// @public (undocumented)
+// @public
 export type Pagination = z.infer<typeof PaginationSchema>;
 
 // @public
@@ -100,7 +100,7 @@ export const PaginationSchema: z.ZodObject<{
     total_pages: z.ZodInt;
 }, z.core.$strict>;
 
-// @public (undocumented)
+// @public
 export type UpdateNoteRequest = z.infer<typeof UpdateNoteRequestSchema>;
 
 // @public

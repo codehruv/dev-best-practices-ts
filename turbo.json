@@ -45,6 +45,10 @@
     },
     "clean": {
       "cache": false
+    },
+    "docs:check": {
+      "inputs": ["src/**", "tests/docs/**", "docs/**", "tsconfig*.json", "package.json"],
+      "outputs": []
     }
   }
 }

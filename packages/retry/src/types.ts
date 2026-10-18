@@ -34,8 +34,11 @@ export interface Random {
  * @public
  */
 export interface RetryDependencies {
+  /** Measures elapsed time against the policy's `maxElapsedMs`. */
   readonly clock: Clock;
+  /** Waits out each backoff delay. */
   readonly sleeper: Sleeper;
+  /** Picks where each delay falls inside its jitter window. */
   readonly random: Random;
 }
 
@@ -50,6 +53,9 @@ export type RetryPredicate = (error: unknown, attempt: number) => boolean;
  * How many times to retry and how long to wait between attempts.
  *
  * @public
+ *
+ * @example A policy with a time budget and a predicate
+ * {@includeCode ../tests/docs/reference/examples.test.ts#RetryPolicy}
  */
 export interface RetryPolicy {
   /** Total attempts, including the first. Must be an integer of at least 1. */

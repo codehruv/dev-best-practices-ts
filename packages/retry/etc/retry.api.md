@@ -9,10 +9,8 @@ export interface Clock {
     now(): number;
 }
 
-// Warning: (ae-forgotten-export) The symbol "BackoffShape" needs to be exported by the entry point index.d.ts
-//
 // @public
-export function computeBackoffDelay(retryNumber: number, shape: BackoffShape, random: Random): number;
+export function computeBackoffDelay(retryNumber: number, shape: Pick<RetryPolicy, 'baseDelayMs' | 'maxDelayMs'>, random: Random): number;
 
 // @public
 export const defaultDependencies: RetryDependencies;
@@ -38,17 +36,13 @@ export class Retrier {
 // @public
 export class RetryAbortedError extends RetryError {
     constructor(attempts: number, cause: unknown);
-    // (undocumented)
     readonly attempts: number;
 }
 
 // @public
 export interface RetryDependencies {
-    // (undocumented)
     readonly clock: Clock;
-    // (undocumented)
     readonly random: Random;
-    // (undocumented)
     readonly sleeper: Sleeper;
 }
 
@@ -60,7 +54,6 @@ export class RetryError extends Error {
 // @public
 export class RetryExhaustedError extends RetryError {
     constructor(attempts: number, cause: unknown);
-    // (undocumented)
     readonly attempts: number;
 }
 

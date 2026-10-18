@@ -4,6 +4,9 @@ import type { Clock, Random, RetryDependencies, Sleeper } from './types.js';
  * Monotonic clock. `performance.now()` does not jump when the wall clock is adjusted.
  *
  * @public
+ *
+ * @example Measure elapsed time
+ * {@includeCode ../tests/docs/reference/examples.test.ts#systemClock}
  */
 export const systemClock: Clock = {
   now: () => performance.now(),
@@ -13,6 +16,9 @@ export const systemClock: Clock = {
  * Sleeps on a timer and wakes early when the signal aborts.
  *
  * @public
+ *
+ * @example Abort a long sleep
+ * {@includeCode ../tests/docs/reference/examples.test.ts#timerSleeper}
  */
 export const timerSleeper: Sleeper = {
   sleep: (ms, signal) =>
@@ -37,15 +43,21 @@ export const timerSleeper: Sleeper = {
  * `Math.random` is fine here. Jitter needs spread, not unpredictability.
  *
  * @public
+ *
+ * @example Draw a jitter value
+ * {@includeCode ../tests/docs/reference/examples.test.ts#mathRandom}
  */
 export const mathRandom: Random = {
   next: () => Math.random(),
 };
 
 /**
- * Production collaborators for a {@link Retrier}.
+ * Production collaborators for a {@link Retrier}. The constructor uses them when you pass none.
  *
  * @public
+ *
+ * @example Implicit and explicit defaults
+ * {@includeCode ../tests/docs/reference/examples.test.ts#defaultDependencies}
  */
 export const defaultDependencies: RetryDependencies = {
   clock: systemClock,

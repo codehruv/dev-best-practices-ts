@@ -1,0 +1,45 @@
+{
+  "name": "@dbp/docs-gen",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Generates Diátaxis tutorials and how-to guides from executable doc tests, and gates documentation coverage of every export.",
+  "bin": {
+    "dbp-docs-gen": "./src/cli.ts"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./typedoc.base.json": "./typedoc.base.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "typedoc.base.json"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint --max-warnings 0 .",
+    "lint:fix": "eslint --fix .",
+    "test:unit": "vitest run",
+    "generate": "typedoc && node src/cli.ts generate",
+    "clean": "rm -rf dist coverage",
+    "docs:check": "node src/cli.ts check"
+  },
+  "dependencies": {
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "eslint": "catalog:",
+    "typedoc": "catalog:",
+    "typedoc-plugin-markdown": "catalog:",
+    "vitest": "catalog:"
+  }
+}

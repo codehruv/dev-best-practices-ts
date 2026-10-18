@@ -1,0 +1,33 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "readme": "none",
+  "jsDocCompatibility": { "exampleTag": false },
+  "disableSources": true,
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeInternal": true,
+  "blockTags": [
+    "@defaultValue",
+    "@deprecated",
+    "@example",
+    "@param",
+    "@remarks",
+    "@returns",
+    "@see",
+    "@throws",
+    "@typeParam"
+  ],
+  "sort": ["kind", "alphabetical"],
+  "treatWarningsAsErrors": true,
+  "treatValidationWarningsAsErrors": true,
+  "validation": {
+    "notExported": true,
+    "invalidLink": true,
+    "notDocumented": true
+  },
+  "outputFileStrategy": "modules",
+  "hidePageHeader": true,
+  "hideBreadcrumbs": true,
+  "useCodeBlocks": true,
+  "cleanOutputDir": true
+}

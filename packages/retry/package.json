@@ -16,18 +16,23 @@
   "sideEffects": false,
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "generate": "mkdir -p etc && api-extractor run --local",
     "typecheck": "tsc -p tsconfig.json",
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix .",
     "test:unit": "vitest run",
-    "clean": "rm -rf dist coverage"
+    "bench": "vitest bench --run --no-file-parallelism",
+    "clean": "rm -rf dist coverage",
+    "generate": "typedoc && dbp-docs-gen generate && mkdir -p etc && api-extractor run --local",
+    "docs:check": "dbp-docs-gen check"
   },
   "devDependencies": {
+    "@dbp/docs-gen": "workspace:*",
     "@microsoft/api-extractor": "catalog:",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "eslint": "catalog:",
+    "typedoc": "catalog:",
+    "typedoc-plugin-markdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }

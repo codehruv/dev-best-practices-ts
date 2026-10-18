@@ -18,22 +18,26 @@
   "sideEffects": false,
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "generate": "node dist/cli/generate-openapi.js && api-extractor run --local",
+    "generate": "node dist/cli/generate-openapi.js && typedoc && dbp-docs-gen generate && mkdir -p etc && api-extractor run --local",
     "typecheck": "tsc -p tsconfig.json",
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix .",
     "test:unit": "vitest run",
-    "clean": "rm -rf dist coverage"
+    "clean": "rm -rf dist coverage",
+    "docs:check": "dbp-docs-gen check"
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@dbp/docs-gen": "workspace:*",
     "@microsoft/api-extractor": "catalog:",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "eslint": "catalog:",
+    "typedoc": "catalog:",
+    "typedoc-plugin-markdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }

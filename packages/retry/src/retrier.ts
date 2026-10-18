@@ -4,9 +4,13 @@ import { InvalidRetryPolicyError, RetryAbortedError, RetryExhaustedError } from 
 import type { RetryDependencies, RetryPolicy } from './types.js';
 
 /**
- * An operation the retrier calls once per attempt. `attempt` is 1-based.
+ * An operation the retrier calls once per attempt. `attempt` is 1-based. Pass `signal` on
+ * to I/O calls so cancellation stops in-flight work.
  *
  * @public
+ *
+ * @example Forward the signal to fetch
+ * {@includeCode ../tests/docs/reference/examples.test.ts#RetryOperation}
  */
 export type RetryOperation<T> = (attempt: number, signal: AbortSignal | undefined) => Promise<T>;
 
@@ -15,6 +19,9 @@ export type RetryOperation<T> = (attempt: number, signal: AbortSignal | undefine
  * full jitter. Validate the policy once at construction and reuse the instance across calls.
  *
  * @public
+ *
+ * @example Retry an operation
+ * {@includeCode ../tests/docs/reference/examples.test.ts#Retrier}
  */
 export class Retrier {
   readonly #policy: RetryPolicy;

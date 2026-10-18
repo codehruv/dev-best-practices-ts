@@ -22,7 +22,15 @@
       "Bash(pnpm exec vitest:*)",
       "Bash(pnpm exec prettier:*)",
       "Bash(pnpm why:*)",
-      "Bash(pnpm ls:*)"
+      "Bash(pnpm ls:*)",
+      "Bash(just api-check)",
+      "Bash(just changesets)",
+      "Bash(just changeset)",
+      "Bash(just docs-check)",
+      "Bash(just bench)",
+      "Bash(just slo)",
+      "Bash(just slo-validate)",
+      "Bash(pnpm changeset status:*)"
     ],
     "deny": [
       "Read(./.env)",

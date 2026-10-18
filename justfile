@@ -17,7 +17,7 @@ setup:
     pnpm exec lefthook install
 
 # Run every check CI runs.
-verify: fmt-check lint deadcode banned-terms changesets typecheck test
+verify: fmt-check lint deadcode banned-terms changesets typecheck test docs-check
 
 # Apply linter then formatter fixes, then verify. Lint fixes run first because they can
 # leave code the formatter has to reflow.
@@ -56,6 +56,10 @@ typecheck:
 test:
     pnpm run test {{ turbo_flags }}
 
+# Fail on undocumented exports, broken doc links, or Diátaxis violations.
+docs-check:
+    pnpm run docs:check {{ turbo_flags }}
+
 # Find unused files, exports, and dependencies.
 deadcode:
     pnpm run deadcode
@@ -91,3 +95,37 @@ changeset:
 # this in its version PR, so it rarely runs locally.
 version-packages:
     pnpm run version-packages
+
+# Timings depend on machine load, so this stays out of `verify`. CI runs it in its own
+# workflow (.github/workflows/slo.yaml).
+
+# Run the benchmarks and check every benchmark-backed SLO against its objectives and baseline.
+slo *ARGS: bench
+    #!/usr/bin/env bash
+    set -uo pipefail
+    pnpm run --silent slo check {{ ARGS }}
+    status=$?
+    # A burst of background load can fail a healthy run, so a miss (exit 1) is measured
+    # once more before it counts. A real regression fails both runs. Exit 2 means bad
+    # input, which re-measuring cannot fix.
+    if [[ $status -eq 1 ]]; then
+      echo "Re-measuring once to rule out machine noise." >&2
+      pnpm run bench && pnpm run --silent slo check {{ ARGS }}
+      status=$?
+    fi
+    exit $status
+
+# Every later `just slo` on this machine compares against the baseline, so record it on
+# an idle machine and commit the result.
+
+# Record this machine's benchmark results as its baseline in slo/baselines/.
+slo-baseline: bench
+    pnpm run --silent slo baseline
+
+# Validate the OpenSLO specs in slo/ without running benchmarks.
+slo-validate:
+    pnpm run --silent slo validate
+
+# Run every package's benchmarks, one package at a time so they do not compete for CPU.
+bench:
+    pnpm run bench
