@@ -85,6 +85,19 @@ jobs:
         with:
           name: slo-results
 
+      # github-action-benchmark fetches gh-pages before recording and fails when the branch
+      # does not exist, so the first run on a new repository creates it empty.
+      - name: Create gh-pages on first run
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          remote="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          if ! git ls-remote --exit-code --heads "$remote" gh-pages >/dev/null; then
+            git -c user.name=github-actions -c user.email=github-actions@users.noreply.github.com \
+              commit-tree "$(git hash-object -t tree /dev/null)" -m "chore: initialize benchmark history" \
+              | xargs -I{} git push "$remote" {}:refs/heads/gh-pages
+          fi
+
       - name: Record latency history
         uses: benchmark-action/github-action-benchmark@4322e5726e6334590d251fc4f92bec0efafc45dc # v1.22.2
         with:
