@@ -24,7 +24,17 @@ updates:
     versioning-strategy: increase
     commit-message:
       prefix: 'chore(deps): '
+    # Dependabot assigns each update to the first group it matches, so the family groups
+    # come first. Packages in a family share a major version and break when bumped apart.
     groups:
+      vitest:
+        patterns: ['vitest', '@vitest/*', '@amiceli/vitest-cucumber']
+      eslint:
+        patterns: ['eslint', '@eslint/*', 'typescript-eslint', 'eslint-*']
+      typedoc:
+        patterns: ['typedoc', 'typedoc-*']
+      cucumber:
+        patterns: ['@cucumber/*']
       # Minor and patch bumps land as one PR. Majors stay separate so each gets its own review.
       minor-and-patch:
         update-types: [minor, patch]
