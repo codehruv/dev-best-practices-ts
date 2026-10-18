@@ -12,6 +12,8 @@ catalog:
   eslint-plugin-simple-import-sort: ^12.1.1
   globals: ^16.5.0
   jiti: ^2.6.1
+  import-integrity-lint: 1.3.0
+  legacy-lint-manager: ^1.1.0
   knip: ^6.41.0
   lefthook: ^2.2.1
   prettier: ^3.9.8

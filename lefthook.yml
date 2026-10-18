@@ -17,6 +17,9 @@ pre-commit:
       run: pnpm exec eslint --max-warnings 0 {staged_files}
     - name: banned-terms
       run: bash scripts/lint-banned-terms.sh
+    - name: legacy-lint
+      glob: '*.{ts,tsx,mts,cts,jsonc,json}'
+      run: pnpm run --silent lint:legacy-validation
 
 commit-msg:
   jobs:

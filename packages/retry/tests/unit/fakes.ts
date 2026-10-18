@@ -1,11 +1,11 @@
 import type { Clock, Random, RetryDependencies, RetryPolicy } from '../../src/index.js';
 
 /** A clock that only moves when the fake sleeper sleeps. */
-export interface FakeClock extends Clock {
+interface FakeClock extends Clock {
   advance(ms: number): void;
 }
 
-export function makeClock(start = 0): FakeClock {
+function makeClock(start = 0): FakeClock {
   let current = start;
   return {
     now: () => current,
@@ -21,7 +21,7 @@ export function makeRandom(value = 0.5): Random {
 }
 
 /** Fake collaborators plus a record of every delay the retrier slept for. */
-export interface FakeDependencies extends RetryDependencies {
+interface FakeDependencies extends RetryDependencies {
   readonly clock: FakeClock;
   readonly sleeps: number[];
 }
@@ -53,7 +53,7 @@ export function makePolicy(overrides: Partial<RetryPolicy> = {}): RetryPolicy {
 }
 
 /** A scripted operation plus the attempt numbers it was called with. */
-export interface ScriptedOperation<T> {
+interface ScriptedOperation<T> {
   readonly operation: (attempt: number) => Promise<T>;
   readonly calls: readonly number[];
 }
