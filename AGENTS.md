@@ -70,6 +70,10 @@ Good code carries comments that change what the reader does: constraints the cod
 
 Unit tests are fast and deterministic and run on every change. Integration tests cover real boundaries. End-to-end tests stay thin. Mock by implementing the interface, never by patching internals. Each test sets up its own state. Flaky tests get quarantined with an issue and fixed on a deadline. Full rules: [`docs/reference/testing.md`](docs/reference/testing.md).
 
+## Documentation
+
+Package docs follow Diátaxis (tutorials, how-to guides, reference, explanation) and are generated from executable doc tests in `tests/docs/`, so every sample runs as a test. Never edit generated pages. Change the doc test or TSDoc and run `just generate`. `just verify` fails on any undocumented export, broken link, or Diátaxis violation. Full rules: [`docs/reference/documentation.md`](docs/reference/documentation.md).
+
 ## Observability
 
 Services expose health and readiness endpoints and metrics. Instrument every external call and every endpoint (latency, status, count). Log structured JSON with a static message and the dynamic values as fields. Never log secrets or PII. Full rules: [`docs/reference/observability.md`](docs/reference/observability.md).

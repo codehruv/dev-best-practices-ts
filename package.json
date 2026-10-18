@@ -17,7 +17,8 @@
     "generate": "turbo run generate",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "deadcode": "knip"
+    "deadcode": "knip",
+    "docs:check": "turbo run docs:check"
   },
   "devDependencies": {
     "@eslint/js": "catalog:",
