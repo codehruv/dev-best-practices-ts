@@ -78,6 +78,10 @@ Services expose health and readiness endpoints and metrics. Instrument every ext
 
 Our APIs are consumed by code we will never see. Changes are additive. Errors are explicit, with debuggable messages. Collections paginate from day one. Full rules: [`docs/reference/api-design.md`](docs/reference/api-design.md).
 
+## Versioning
+
+Every interface (a package's TypeScript API, a package's OpenAPI document) has its own [SemVer](https://semver.org/spec/v2.0.0.html) version and its own [Keep a Changelog 2.0.0](https://keepachangelog.com/en/2.0.0/) `CHANGELOG.md`. A change to an interface ships with a changeset (`just changeset`) whose summary lines start with a change type (`Added:`, `Fixed:`, ...), and a breaking entry starts with `**Breaking:**`. `just api-check` fails when the planned bump is smaller than the diff requires. When you draft changelog text, write notable, user-facing changes in plain words, never a commit log. Full rules: [`docs/reference/versioning.md`](docs/reference/versioning.md).
+
 ## Security
 
 Validate all input at trust boundaries. Use parameterized queries. Grant least privilege. Pin CI actions by commit SHA. Full rules: [`docs/reference/security.md`](docs/reference/security.md).

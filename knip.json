@@ -7,6 +7,14 @@
     "packages/*": {
       "entry": ["src/index.ts"],
       "project": ["src/**/*.ts", "tests/**/*.ts"]
+    },
+    "packages/api-contract": {
+      "entry": ["src/index.ts", "src/cli/*.ts"],
+      "project": ["src/**/*.ts", "tests/**/*.ts"]
+    },
+    "tools/*": {
+      "entry": ["src/cli.ts"],
+      "project": ["src/**/*.ts", "tests/**/*.ts"]
     }
   },
   "ignoreExportsUsedInFile": true

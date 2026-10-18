@@ -1,11 +1,19 @@
 import type { Clock, Random, RetryDependencies, Sleeper } from './types.js';
 
-/** Monotonic clock. `performance.now()` does not jump when the wall clock is adjusted. */
+/**
+ * Monotonic clock. `performance.now()` does not jump when the wall clock is adjusted.
+ *
+ * @public
+ */
 export const systemClock: Clock = {
   now: () => performance.now(),
 };
 
-/** Sleeps on a timer and wakes early when the signal aborts. */
+/**
+ * Sleeps on a timer and wakes early when the signal aborts.
+ *
+ * @public
+ */
 export const timerSleeper: Sleeper = {
   sleep: (ms, signal) =>
     new Promise<void>((resolve, reject) => {
@@ -25,12 +33,20 @@ export const timerSleeper: Sleeper = {
     }),
 };
 
-/** `Math.random` is fine here. Jitter needs spread, not unpredictability. */
+/**
+ * `Math.random` is fine here. Jitter needs spread, not unpredictability.
+ *
+ * @public
+ */
 export const mathRandom: Random = {
   next: () => Math.random(),
 };
 
-/** Production collaborators for a {@link Retrier}. */
+/**
+ * Production collaborators for a {@link Retrier}.
+ *
+ * @public
+ */
 export const defaultDependencies: RetryDependencies = {
   clock: systemClock,
   sleeper: timerSleeper,

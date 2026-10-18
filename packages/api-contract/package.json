@@ -1,0 +1,40 @@
+{
+  "name": "@dbp/api-contract",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Example HTTP contract: Zod schemas that generate a versioned OpenAPI 3.1 document.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./openapi.json": "./openapi/openapi.json"
+  },
+  "files": [
+    "dist",
+    "openapi"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "generate": "node dist/cli/generate-openapi.js && api-extractor run --local",
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint --max-warnings 0 .",
+    "lint:fix": "eslint --fix .",
+    "test:unit": "vitest run",
+    "clean": "rm -rf dist coverage"
+  },
+  "dependencies": {
+    "@asteasolutions/zod-to-openapi": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@microsoft/api-extractor": "catalog:",
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

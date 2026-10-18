@@ -1,32 +1,56 @@
-/** Reads the current time. Injected so tests control elapsed time without real waiting. */
+/**
+ * Reads the current time. Injected so tests control elapsed time without real waiting.
+ *
+ * @public
+ */
 export interface Clock {
   /** Milliseconds since an arbitrary fixed origin. Only differences between readings matter. */
   now(): number;
 }
 
-/** Waits between attempts. Injected so tests run instantly and deterministically. */
+/**
+ * Waits between attempts. Injected so tests run instantly and deterministically.
+ *
+ * @public
+ */
 export interface Sleeper {
   /** Resolves after `ms` milliseconds, or rejects with the signal's reason once `signal` aborts. */
   sleep(ms: number, signal?: AbortSignal): Promise<void>;
 }
 
-/** Source of jitter. Injected so tests can pin the delay the backoff picks. */
+/**
+ * Source of jitter. Injected so tests can pin the delay the backoff picks.
+ *
+ * @public
+ */
 export interface Random {
   /** A number in the half-open range [0, 1). */
   next(): number;
 }
 
-/** The collaborators a {@link Retrier} depends on. */
+/**
+ * The collaborators a {@link Retrier} depends on.
+ *
+ * @public
+ */
 export interface RetryDependencies {
   readonly clock: Clock;
   readonly sleeper: Sleeper;
   readonly random: Random;
 }
 
-/** Decides whether a failed attempt is worth retrying. `attempt` is 1-based. */
+/**
+ * Decides whether a failed attempt is worth retrying. `attempt` is 1-based.
+ *
+ * @public
+ */
 export type RetryPredicate = (error: unknown, attempt: number) => boolean;
 
-/** How many times to retry and how long to wait between attempts. */
+/**
+ * How many times to retry and how long to wait between attempts.
+ *
+ * @public
+ */
 export interface RetryPolicy {
   /** Total attempts, including the first. Must be an integer of at least 1. */
   readonly maxAttempts: number;

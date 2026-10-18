@@ -1,9 +1,14 @@
 packages:
   - packages/*
+  - tools/*
 
 # One version per dependency across the workspace. Packages reference these with
 # `"<name>": "catalog:"`, so a bump happens once, here.
 catalog:
+  '@asteasolutions/zod-to-openapi': ^9.1.0
+  '@changesets/cli': ^3.0.3
+  '@changesets/get-release-plan': ^5.0.2
+  '@microsoft/api-extractor': ^7.59.4
   '@eslint/js': ^10.0.1
   '@types/node': ^22.20.4
   '@vitest/coverage-v8': ^4.1.11
@@ -19,6 +24,7 @@ catalog:
   typescript: ~5.9.3
   typescript-eslint: ^8.70.0
   vitest: ^4.1.11
+  zod: ^4.6.5
 
 # A version must be public for 7 days (in minutes) before pnpm installs it.
 # Most malicious publishes are detected and yanked inside that window.

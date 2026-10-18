@@ -12,7 +12,9 @@ interface BackoffShape {
  * dependency does not get hit by synchronized waves of retries.
  * See https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/.
  *
- * @param retryNumber 1 for the delay before the second attempt, 2 before the third, and so on.
+ * @param retryNumber - 1 for the delay before the second attempt, 2 before the third, and so on.
+ *
+ * @public
  */
 export function computeBackoffDelay(
   retryNumber: number,
