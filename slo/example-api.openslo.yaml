@@ -1,0 +1,200 @@
+# Reference SLOs for a request-serving service. Copy this file when you add a service.
+#
+# Production monitoring evaluates these, not the benchmark checker: `slo validate` checks
+# their structure and references, and the Prometheus queries are what a monitoring
+# backend would run. Alerting follows the multi-window, multi-burn-rate design from the
+# Google SRE Workbook (chapter 5, "Alerting on SLOs"), with thresholds for a 30-day
+# window. See docs/reference/slo.md.
+
+apiVersion: openslo/v1
+kind: Service
+metadata:
+  name: example-api
+  displayName: Example API
+spec:
+  description: Public JSON API. Users notice failed and slow requests directly, so availability and latency are both measured from the load balancer.
+---
+apiVersion: openslo/v1
+kind: SLI
+metadata:
+  name: example-api-availability
+  displayName: Successful request ratio
+spec:
+  description: Share of requests that did not fail on the server side. 5xx responses are bad, 4xx responses are good because the server behaved correctly. Measured at the load balancer, so requests that never reach the service still count.
+  ratioMetric:
+    counter: true
+    good:
+      metricSource:
+        type: Prometheus
+        spec:
+          query: sum(increase(http_requests_total{service="example-api", code!~"5.."}[1m]))
+    total:
+      metricSource:
+        type: Prometheus
+        spec:
+          query: sum(increase(http_requests_total{service="example-api"}[1m]))
+---
+apiVersion: openslo/v1
+kind: SLI
+metadata:
+  name: example-api-latency
+  displayName: p99 request latency
+spec:
+  description: 99th percentile request duration in seconds over each one-minute slice, from the load balancer histogram.
+  thresholdMetric:
+    metricSource:
+      type: Prometheus
+      spec:
+        query: histogram_quantile(0.99, sum by (le) (rate(http_request_duration_seconds_bucket{service="example-api"}[1m])))
+---
+apiVersion: openslo/v1
+kind: AlertNotificationTarget
+metadata:
+  name: on-call-pager
+spec:
+  description: Wakes the on-call engineer. Reserved for budget burn fast enough to need action within hours.
+  target: pager
+---
+apiVersion: openslo/v1
+kind: AlertNotificationTarget
+metadata:
+  name: reliability-queue
+spec:
+  description: Opens a ticket for the owning team to handle during working hours.
+  target: ticket
+---
+apiVersion: openslo/v1
+kind: AlertCondition
+metadata:
+  name: burn-fast
+  annotations:
+    dev-best-practices/short-window: 5m
+spec:
+  description: 2% of the 30-day budget gone in one hour. At this rate the whole budget is gone in about two days.
+  severity: page
+  condition:
+    kind: burnrate
+    op: gte
+    threshold: 14.4
+    lookbackWindow: 1h
+    alertAfter: 2m
+---
+apiVersion: openslo/v1
+kind: AlertCondition
+metadata:
+  name: burn-medium
+  annotations:
+    dev-best-practices/short-window: 30m
+spec:
+  description: 5% of the 30-day budget gone in six hours. At this rate the whole budget is gone in five days.
+  severity: page
+  condition:
+    kind: burnrate
+    op: gte
+    threshold: 6
+    lookbackWindow: 6h
+    alertAfter: 15m
+---
+apiVersion: openslo/v1
+kind: AlertCondition
+metadata:
+  name: burn-slow
+  annotations:
+    dev-best-practices/short-window: 6h
+spec:
+  description: 10% of the 30-day budget gone in three days. Not urgent, but the SLO misses if it continues.
+  severity: ticket
+  condition:
+    kind: burnrate
+    op: gte
+    threshold: 1
+    lookbackWindow: 3d
+    alertAfter: 1h
+---
+apiVersion: openslo/v1
+kind: AlertPolicy
+metadata:
+  name: page-on-fast-burn
+spec:
+  description: Pages when the budget burns at 14.4x over both one hour and five minutes.
+  alertWhenBreaching: true
+  alertWhenResolved: true
+  alertWhenNoData: true
+  conditions:
+    - conditionRef: burn-fast
+  notificationTargets:
+    - targetRef: on-call-pager
+---
+apiVersion: openslo/v1
+kind: AlertPolicy
+metadata:
+  name: page-on-medium-burn
+spec:
+  description: Pages when the budget burns at 6x over both six hours and thirty minutes.
+  alertWhenBreaching: true
+  alertWhenResolved: true
+  alertWhenNoData: false
+  conditions:
+    - conditionRef: burn-medium
+  notificationTargets:
+    - targetRef: on-call-pager
+---
+apiVersion: openslo/v1
+kind: AlertPolicy
+metadata:
+  name: ticket-on-slow-burn
+spec:
+  description: Opens a ticket when the budget burns at 1x over both three days and six hours.
+  alertWhenBreaching: true
+  alertWhenResolved: false
+  alertWhenNoData: false
+  conditions:
+    - conditionRef: burn-slow
+  notificationTargets:
+    - targetRef: reliability-queue
+---
+apiVersion: openslo/v1
+kind: SLO
+metadata:
+  name: example-api-availability
+  displayName: Example API availability
+spec:
+  description: 99.9% of requests succeed over 30 days, which allows about 43 minutes of full outage.
+  service: example-api
+  indicatorRef: example-api-availability
+  budgetingMethod: Occurrences
+  timeWindow:
+    - duration: 30d
+      isRolling: true
+  objectives:
+    - displayName: 99.9% of requests succeed
+      target: 0.999
+  alertPolicies:
+    - alertPolicyRef: page-on-fast-burn
+    - alertPolicyRef: page-on-medium-burn
+    - alertPolicyRef: ticket-on-slow-burn
+---
+apiVersion: openslo/v1
+kind: SLO
+metadata:
+  name: example-api-latency
+  displayName: Example API latency
+spec:
+  description: In 99% of one-minute slices over 30 days, the p99 request finishes within 300 ms.
+  service: example-api
+  indicatorRef: example-api-latency
+  budgetingMethod: Timeslices
+  timeWindow:
+    - duration: 30d
+      isRolling: true
+  objectives:
+    - displayName: p99 under 300 ms
+      op: lte
+      value: 0.3
+      target: 0.99
+      timeSliceTarget: 0.99
+      timeSliceWindow: 1m
+  alertPolicies:
+    - alertPolicyRef: page-on-fast-burn
+    - alertPolicyRef: page-on-medium-burn
+    - alertPolicyRef: ticket-on-slow-burn

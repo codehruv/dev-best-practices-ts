@@ -18,7 +18,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "deadcode": "knip",
-    "docs:check": "turbo run docs:check"
+    "docs:check": "turbo run docs:check",
+    "bench": "pnpm --recursive --workspace-concurrency=1 --if-present run bench",
+    "slo": "turbo run build --filter=@dbp/slo --output-logs=errors-only && node packages/slo/dist/cli.js"
   },
   "devDependencies": {
     "@eslint/js": "catalog:",

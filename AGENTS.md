@@ -78,6 +78,10 @@ Package docs follow Diátaxis (tutorials, how-to guides, reference, explanation)
 
 Services expose health and readiness endpoints and metrics. Instrument every external call and every endpoint (latency, status, count). Log structured JSON with a static message and the dynamic values as fields. Never log secrets or PII. Full rules: [`docs/reference/observability.md`](docs/reference/observability.md).
 
+## SLOs
+
+Every SLO is an [OpenSLO v1](https://openslo.com) spec in `slo/`, validated by `just verify`. Library performance budgets are measured by Vitest benchmarks and checked with `just slo`, which fails on a missed objective or a regression past this machine's baseline. After an intended slowdown, re-record the baseline with `just slo-baseline` in the same PR and say why. Never loosen an objective to make a check pass. Full rules, noise control, burn-rate alerting, and the error budget policy: [`docs/reference/slo.md`](docs/reference/slo.md).
+
 ## APIs
 
 Our APIs are consumed by code we will never see. Changes are additive. Errors are explicit, with debuggable messages. Collections paginate from day one. Full rules: [`docs/reference/api-design.md`](docs/reference/api-design.md).

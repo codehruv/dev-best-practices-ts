@@ -1,6 +1,8 @@
 node_modules/
 dist/
 coverage/
+# Benchmark output, read by `slo check`.
+.slo/
 .turbo/
 *.tsbuildinfo
 .direnv/
