@@ -109,3 +109,17 @@ packages/<name>/
 - Add a dependency with `pnpm --filter <package> add <name>`. Shared dev tools go in the catalog.
 - `minimumReleaseAge` blocks versions younger than 7 days. If an urgent security fix needs a newer version, add it to `minimumReleaseAgeExclude` with a comment and a removal date.
 - Install scripts are denied (`strictDepBuilds`). Review a package's script before allowing it in `allowBuilds`.
+
+## OpenTelemetry
+
+- Libraries depend on `@opentelemetry/api` only, never on an SDK. Without an SDK the API calls do nothing, so the application decides what gets exported.
+- Services use zero-code instrumentation from the [OpenTelemetry JavaScript getting started guide](https://opentelemetry.io/docs/zero-code/js/). Install `@opentelemetry/api` and `@opentelemetry/auto-instrumentations-node`, then load the register hook at startup:
+
+  ```sh
+  OTEL_SERVICE_NAME=my-service \
+  OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318 \
+  node --import @opentelemetry/auto-instrumentations-node/register dist/index.js
+  ```
+
+- Configure the SDK only through the standard `OTEL_*` environment variables.
+- Use attribute and metric names from the official [semantic conventions](https://opentelemetry.io/docs/specs/semconv/). Do not invent custom names until the team records a telemetry convention in an ADR.

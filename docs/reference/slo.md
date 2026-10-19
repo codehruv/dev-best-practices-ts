@@ -86,7 +86,7 @@ Benchmark timings vary with machine load, CPU frequency, and garbage collection.
 | Re-measure once on a miss     | `just slo`                                       | A burst of background load fails one run. A real regression fails both.                                                                                    |
 | Noise warning                 | `slo check`                                      | A relative margin of error above 5% prints a warning to re-run on an idle machine.                                                                         |
 
-Absolute objectives catch large regressions everywhere, including CI. The baseline catches smaller regressions (20% by default) on the machine that recorded it. The CI history catches gradual drift.
+Absolute objectives catch large regressions everywhere, including CI. The baseline catches smaller regressions (20% by default) on the machine that recorded it. CI catches only absolute misses, so track drift locally against the baseline.
 
 ## Commands
 
@@ -101,15 +101,9 @@ Absolute objectives catch large regressions everywhere, including CI. The baseli
 
 ## Tracking Over Time
 
-`.github/workflows/slo.yaml` runs on every pull request and every push to `main`:
+`.github/workflows/slo.yaml` runs `just slo` on every pull request and every push to `main`, with read-only permissions. It writes the result table to the job summary, uploads the benchmark reports as an artifact, and fails on a missed absolute objective.
 
-1. **Measure** runs `just slo` with read-only permissions, writes the result table to the job summary, and uploads the benchmark reports as an artifact. It fails on a missed absolute objective.
-2. **Record history** runs only on pushes to `main`. It is the only job with write access. It appends the results to the `gh-pages` branch with [github-action-benchmark](https://github.com/benchmark-action/github-action-benchmark), which renders trend charts under `/slo`. It fails when a result is 2x worse than the previous `main` run and warns at 1.5x.
-3. **Compare with main** runs on pull requests. It compares the PR's results to `main`'s history without writing anything. Until the first push to `main` creates `gh-pages`, it reports that no history exists.
-
-The history lives on `gh-pages` rather than in a cache or committed file. Caches expire, and committed history would add a commit to `main` for every merge. Enable GitHub Pages on the `gh-pages` branch to browse the charts.
-
-The CI thresholds sit far above the 20% baseline threshold, because shared runners vary by about 30% between runs. The local baseline is the precise instrument. CI history is the coarse, always-on one.
+Results are not exported as telemetry yet. When a telemetry convention exists, export them through OpenTelemetry instead of building history storage here.
 
 ## Adding an SLO
 
