@@ -43,8 +43,8 @@ catalogs:
       specifier: ^10.1.8
       version: 10.1.8
     eslint-plugin-simple-import-sort:
-      specifier: ^12.1.1
-      version: 12.1.1
+      specifier: ^14.0.0
+      version: 14.0.0
     globals:
       specifier: ^16.5.0
       version: 16.5.0
@@ -112,7 +112,7 @@ importers:
         version: 10.1.8(eslint@10.12.0(jiti@2.7.0)(supports-color@8.1.1))
       eslint-plugin-simple-import-sort:
         specifier: 'catalog:'
-        version: 12.1.1(eslint@10.12.0(jiti@2.7.0)(supports-color@8.1.1))
+        version: 14.0.0(eslint@10.12.0(jiti@2.7.0)(supports-color@8.1.1))
       globals:
         specifier: 'catalog:'
         version: 16.5.0
@@ -1489,8 +1489,8 @@ packages:
     peerDependencies:
       eslint: '>=7.0.0'
 
-  eslint-plugin-simple-import-sort@12.1.1:
-    resolution: {integrity: sha512-6nuzu4xwQtE3332Uz0to+TxDQYRLTKRESSc2hefVT48Zc8JthmN23Gx9lnYhu0FtkRSL1oxny3kJ2aveVhmOVA==}
+  eslint-plugin-simple-import-sort@14.0.0:
+    resolution: {integrity: sha512-NUJO0+XFCkk+o5EsAJruTgnfMEpeWrPWeJS15UVF60GgXmqz1BJ9/3hzlvG7lkL8Bubzos5cCLptThbFfPnSMQ==}
     peerDependencies:
       eslint: '>=5.0.0'
 
@@ -3314,7 +3314,7 @@ snapshots:
     dependencies:
       eslint: 10.12.0(jiti@2.7.0)(supports-color@8.1.1)
 
-  eslint-plugin-simple-import-sort@12.1.1(eslint@10.12.0(jiti@2.7.0)(supports-color@8.1.1)):
+  eslint-plugin-simple-import-sort@14.0.0(eslint@10.12.0(jiti@2.7.0)(supports-color@8.1.1)):
     dependencies:
       eslint: 10.12.0(jiti@2.7.0)(supports-color@8.1.1)
 
