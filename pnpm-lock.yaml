@@ -144,7 +144,7 @@ importers:
         specifier: 'catalog:'
         version: 8.71.1(eslint@10.12.0(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.9.3)
 
-  packages/api-contract:
+  packages/iso-api-contract:
     dependencies:
       '@asteasolutions/zod-to-openapi':
         specifier: 'catalog:'
@@ -156,9 +156,9 @@ importers:
       '@amiceli/vitest-cucumber':
         specifier: 'catalog:'
         version: 7.0.0(vitest@4.1.11)
-      '@dbp/docs-gen':
+      '@dbp/server-docs-gen':
         specifier: workspace:*
-        version: link:../docs-gen
+        version: link:../server-docs-gen
       '@microsoft/api-extractor':
         specifier: 'catalog:'
         version: 7.59.4(@types/node@22.20.5)
@@ -184,7 +184,40 @@ importers:
         specifier: 'catalog:'
         version: 4.1.11(@types/node@22.20.5)(@vitest/coverage-v8@4.1.11)(vite@8.3.4(@types/node@22.20.5)(jiti@2.7.0)(yaml@2.9.1))
 
-  packages/docs-gen:
+  packages/iso-retry:
+    devDependencies:
+      '@amiceli/vitest-cucumber':
+        specifier: 'catalog:'
+        version: 7.0.0(vitest@4.1.11)
+      '@dbp/server-docs-gen':
+        specifier: workspace:*
+        version: link:../server-docs-gen
+      '@microsoft/api-extractor':
+        specifier: 'catalog:'
+        version: 7.59.4(@types/node@22.20.5)
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.20.5
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 4.1.11(vitest@4.1.11)
+      eslint:
+        specifier: 'catalog:'
+        version: 10.12.0(jiti@2.7.0)(supports-color@8.1.1)
+      typedoc:
+        specifier: 'catalog:'
+        version: 0.28.20(typescript@5.9.3)
+      typedoc-plugin-markdown:
+        specifier: 'catalog:'
+        version: 4.13.1(typedoc@0.28.20(typescript@5.9.3))
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@types/node@22.20.5)(@vitest/coverage-v8@4.1.11)(vite@8.3.4(@types/node@22.20.5)(jiti@2.7.0)(yaml@2.9.1))
+
+  packages/server-docs-gen:
     dependencies:
       '@cucumber/gherkin':
         specifier: 'catalog:'
@@ -218,40 +251,7 @@ importers:
         specifier: 'catalog:'
         version: 4.1.11(@types/node@22.20.5)(@vitest/coverage-v8@4.1.11)(vite@8.3.4(@types/node@22.20.5)(jiti@2.7.0)(yaml@2.9.1))
 
-  packages/retry:
-    devDependencies:
-      '@amiceli/vitest-cucumber':
-        specifier: 'catalog:'
-        version: 7.0.0(vitest@4.1.11)
-      '@dbp/docs-gen':
-        specifier: workspace:*
-        version: link:../docs-gen
-      '@microsoft/api-extractor':
-        specifier: 'catalog:'
-        version: 7.59.4(@types/node@22.20.5)
-      '@types/node':
-        specifier: 'catalog:'
-        version: 22.20.5
-      '@vitest/coverage-v8':
-        specifier: 'catalog:'
-        version: 4.1.11(vitest@4.1.11)
-      eslint:
-        specifier: 'catalog:'
-        version: 10.12.0(jiti@2.7.0)(supports-color@8.1.1)
-      typedoc:
-        specifier: 'catalog:'
-        version: 0.28.20(typescript@5.9.3)
-      typedoc-plugin-markdown:
-        specifier: 'catalog:'
-        version: 4.13.1(typedoc@0.28.20(typescript@5.9.3))
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vitest:
-        specifier: 'catalog:'
-        version: 4.1.11(@types/node@22.20.5)(@vitest/coverage-v8@4.1.11)(vite@8.3.4(@types/node@22.20.5)(jiti@2.7.0)(yaml@2.9.1))
-
-  packages/slo:
+  packages/server-slo:
     dependencies:
       yaml:
         specifier: 'catalog:'
@@ -281,6 +281,24 @@ importers:
       '@changesets/get-release-plan':
         specifier: 'catalog:'
         version: 5.0.2
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.20.5
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 4.1.11(vitest@4.1.11)
+      eslint:
+        specifier: 'catalog:'
+        version: 10.12.0(jiti@2.7.0)(supports-color@8.1.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@types/node@22.20.5)(@vitest/coverage-v8@4.1.11)(vite@8.3.4(@types/node@22.20.5)(jiti@2.7.0)(yaml@2.9.1))
+
+  tools/workspace-check:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'

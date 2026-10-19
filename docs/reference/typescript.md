@@ -15,16 +15,17 @@ The official guidance this repo follows, and the choices layered on top. Where a
 ## Repository Layout
 
 ```text
-packages/<name>/
+packages/<iso-|server-><name>/
   src/              library source; src/index.ts is the only public entry point
   tests/unit/       Vitest unit tests (tests/integration/ when needed)
-  eslint.config.ts  composes getBaseESLintConfig from the root
+  eslint.config.ts  calls getIsomorphicESLintConfig (iso-) or getNodeESLintConfig (server-)
   tsconfig.json     type-checks src, tests, and config files (noEmit)
   tsconfig.build.json  emits src to dist
   vitest.config.ts
 ```
 
 - Library packages live in `packages/`, scoped `@dbp/`. Rename the scope when you adopt the template.
+
 - Each package owns its scripts: `build`, `typecheck`, `lint`, `lint:fix`, `test:unit`, `clean`. Turborepo runs them across the graph.
 - Shared dev-dependency versions live in the `catalog:` in `pnpm-workspace.yaml`. Packages reference `"catalog:"`, never a version.
 
@@ -70,7 +71,7 @@ packages/<name>/
 
 - Prefer functions and plain objects. Use a class when it holds validated state or injected dependencies.
 - Private state uses `#private` fields, which are private at runtime, not only at compile time.
-- Inject dependencies through the constructor and default them to production implementations (`Retrier` in `packages/retry` shows the pattern).
+- Inject dependencies through the constructor and default them to production implementations (`Retrier` in `packages/iso-retry` shows the pattern).
 - No parameter properties (`constructor(private x)`). `erasableSyntaxOnly` bans them.
 
 ## Errors

@@ -36,10 +36,11 @@ export interface BaseESLintConfigOptions {
 }
 
 /**
- * Shared strict ESLint config for every package. Packages compose it and add
- * rules, but never weaken it, so the quality bar stays uniform across the repo.
+ * Shared strict ESLint config for every package. Packages reach it through
+ * {@link getNodeESLintConfig} or {@link getIsomorphicESLintConfig}, never directly, so
+ * every package declares where its code runs.
  */
-export function getBaseESLintConfig({
+function getBaseESLintConfig({
   packageRootDir,
   entryPointFiles = {},
   ignores = [],
@@ -104,5 +105,57 @@ export function getBaseESLintConfig({
       rules: { 'no-console': 'error' },
     },
     prettier,
+  ]);
+}
+
+/**
+ * ESLint config for `server-*` packages and dev tools, which run only on Node.
+ */
+export function getNodeESLintConfig(options: BaseESLintConfigOptions) {
+  return getBaseESLintConfig(options);
+}
+
+// Node globals that `iso-*` source must not touch. `import-integrity/no-node-builtins`
+// catches `node:*` imports but not this global surface.
+const ISOMORPHIC_RESTRICTED_GLOBALS = [
+  'process',
+  'Buffer',
+  '__dirname',
+  '__filename',
+  'global',
+  'setImmediate',
+  'clearImmediate',
+].map((name) => ({
+  name,
+  message: `"${name}" is a Node.js global and does not exist in the browser. Read it through a guarded \`globalThis.${name}\` or pass the value in.`,
+}));
+
+/**
+ * ESLint config for `iso-*` packages, which ship to both the browser and Node. Only
+ * `src/` is restricted, because tests, scripts, and config files never reach a browser
+ * bundle.
+ */
+export function getIsomorphicESLintConfig(options: BaseESLintConfigOptions) {
+  return defineConfig([
+    getBaseESLintConfig(options),
+    {
+      files: ['src/**/*.ts'],
+      languageOptions: { globals: globals['shared-node-browser'] },
+      rules: {
+        'import-integrity/no-node-builtins': 'error',
+        'no-restricted-globals': ['error', ...ISOMORPHIC_RESTRICTED_GLOBALS],
+        'no-restricted-imports': [
+          'error',
+          {
+            patterns: [
+              {
+                group: ['@dbp/server-*', '**/server-*', '**/*.server', '**/*.server.*'],
+                message: 'Node-only modules cannot be imported by an isomorphic package.',
+              },
+            ],
+          },
+        ],
+      },
+    },
   ]);
 }

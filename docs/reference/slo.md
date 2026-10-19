@@ -25,7 +25,7 @@ An SLO states how reliable or fast something must be, measured the way users exp
 
 Specs use [OpenSLO v1](https://openslo.com), a vendor-neutral YAML standard, so they port to a real monitoring backend unchanged. Each `slo/*.openslo.yaml` file holds several YAML documents: one `Service`, its `SLI`s, `SLO`s, and the alerting objects they reference.
 
-`packages/slo` validates a subset of OpenSLO v1 with Zod schemas built from the official field rules. The subset leaves out composite SLOs, `DataSource` objects, and `raw` ratio metrics, so the validator rejects them instead of accepting fields nothing evaluates. Beyond the schema, `slo validate` checks:
+`packages/server-slo` validates a subset of OpenSLO v1 with Zod schemas built from the official field rules. The subset leaves out composite SLOs, `DataSource` objects, and `raw` ratio metrics, so the validator rejects them instead of accepting fields nothing evaluates. Beyond the schema, `slo validate` checks:
 
 - every reference (`service`, `indicatorRef`, `alertPolicyRef`, `conditionRef`, `targetRef`) points at a defined object, and names are unique within each kind,
 - threshold indicators have `op` and `value`, and ratio indicators do not,
@@ -59,7 +59,7 @@ A benchmark SLO is a performance budget for library code, measured by a Vitest b
 
 An objective `op: lte, value: V, target: T` reads "a fraction T of operations take at most V". Target 0.99 checks the p99, 0.5 checks the median. Latency objectives must use `lt` or `lte`, and throughput objectives must use `gt` or `gte`, so no objective rewards getting slower. `timeWindow` is nominal for benchmark SLOs, because each run is evaluated on its own. OpenSLO still requires one.
 
-`slo/retry.openslo.yaml` defines the SLOs for `@dbp/retry`, measured by `packages/retry/tests/bench/retry.bench.ts`.
+`slo/retry.openslo.yaml` defines the SLOs for `@dbp/iso-retry`, measured by `packages/iso-retry/tests/bench/retry.bench.ts`.
 
 ## How a Benchmark Maps to an Objective
 
@@ -92,7 +92,7 @@ Absolute objectives catch large regressions everywhere, including CI. The baseli
 
 | Command             | What it does                                                                                                                                                  |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `just slo-validate` | Validates every spec without running benchmarks. The `@dbp/slo` unit tests also validate the committed specs, so `just verify` covers this.                   |
+| `just slo-validate` | Validates every spec without running benchmarks. The `@dbp/server-slo` unit tests also validate the committed specs, so `just verify` covers this.            |
 | `just slo`          | Runs every package's benchmarks, then checks each benchmark SLO. Exit 1 means a missed objective or a regression, exit 2 means a bad spec or missing results. |
 | `just slo-baseline` | Runs the benchmarks and records them as this machine's baseline in `slo/baselines/<spec>.json`. Run it on an idle machine and commit the file.                |
 | `just bench`        | Runs the benchmarks only.                                                                                                                                     |
@@ -107,7 +107,7 @@ Results are not exported as telemetry yet. When a telemetry convention exists, e
 
 ## Adding an SLO
 
-1. **Pick the SLI.** For library code, write a benchmark in `packages/<name>/tests/bench/*.bench.ts` that batches the operation, and add a `bench` script plus the `benchmark` block in `vitest.config.ts` (see `packages/retry`). For a service, write the monitoring query.
+1. **Pick the SLI.** For library code, write a benchmark in `packages/<name>/tests/bench/*.bench.ts` that batches the operation, and add a `bench` script plus the `benchmark` block in `vitest.config.ts` (see `packages/iso-retry`). For a service, write the monitoring query.
 2. **Declare it.** Add an `SLI` and an `SLO` to the package's `slo/<name>.openslo.yaml`, creating the file and its `Service` if needed. Explain in each `description` what the user notices when it is missed.
 3. **Set the objective from data.** Run `just slo`, read the measured value, and set the objective with 5-8x headroom for benchmark SLOs. For service SLOs, start from the current achieved level.
 4. **Record the baseline.** Run `just slo-baseline` on an idle machine and commit `slo/baselines/<name>.json`.

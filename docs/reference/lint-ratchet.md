@@ -52,7 +52,7 @@ The list may grow. It may never shrink.
 
 Conventions:
 
-- **Entry points.** Each package passes its public API as `entryPointFiles` (mirroring `package.json` `exports`) to `getBaseESLintConfig`. Exports from those files are exempt from unused-export checks.
+- **Entry points.** Each package passes its public API as `entryPointFiles` (mirroring `package.json` `exports`) to `getIsomorphicESLintConfig` or `getNodeESLintConfig`. Exports from those files are exempt from unused-export checks.
 - **Test-only exports** use the `_testOnly` prefix (`export function _testOnlyReset()`). Production code importing a `_testOnly` symbol fails lint.
 - **Never disable `no-unused-exports`.** Delete the export, make it test-only, or add it to the package's public API.
 - **Worktrees in hidden directories.** The plugin skips any path with a dot-prefixed component. `eslint.config.base.ts` exempts `.claude` and `.worktrees` so worktree checkouts are still analyzed.

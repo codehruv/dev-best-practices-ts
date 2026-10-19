@@ -1,4 +1,4 @@
-# Performance SLOs for @dbp/retry, measured by packages/retry/tests/bench/retry.bench.ts.
+# Performance SLOs for @dbp/iso-retry, measured by packages/iso-retry/tests/bench/retry.bench.ts.
 #
 # A benchmark SLO is evaluated once per benchmark run, so `timeWindow` is nominal (OpenSLO
 # requires one). An objective `op: lte, value: V, target: T` reads "a fraction T of
@@ -13,7 +13,7 @@ apiVersion: openslo/v1
 kind: Service
 metadata:
   name: retry-library
-  displayName: '@dbp/retry'
+  displayName: '@dbp/iso-retry'
 spec:
   description: Retries transient async failures with capped exponential backoff and full jitter. Runs on the caller's hot path, so its own overhead must stay negligible next to the operation it retries.
 ---
@@ -28,7 +28,7 @@ spec:
     metricSource:
       type: vitest-bench
       spec:
-        package: retry
+        package: iso-retry
         benchmark: tests/bench/retry.bench.ts > computeBackoffDelay > 1000 delays across retries 1-10
         batchSize: 1000
         unit: ns
@@ -44,7 +44,7 @@ spec:
     metricSource:
       type: vitest-bench
       spec:
-        package: retry
+        package: iso-retry
         benchmark: tests/bench/retry.bench.ts > computeBackoffDelay > 1000 delays across retries 1-10
         batchSize: 1000
         unit: ops/s
@@ -60,7 +60,7 @@ spec:
     metricSource:
       type: vitest-bench
       spec:
-        package: retry
+        package: iso-retry
         benchmark: tests/bench/retry.bench.ts > Retrier.run > 100 runs that succeed on the first attempt
         batchSize: 100
         unit: us
@@ -76,7 +76,7 @@ spec:
     metricSource:
       type: vitest-bench
       spec:
-        package: retry
+        package: iso-retry
         benchmark: tests/bench/retry.bench.ts > Retrier.run > 100 runs that succeed after 3 retries
         batchSize: 100
         unit: us

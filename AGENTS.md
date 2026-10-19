@@ -126,7 +126,7 @@ Record every accepted architectural decision as an ADR in [`docs/adr/`](docs/adr
 
 Full rules with links to the official sources: [`docs/reference/typescript.md`](docs/reference/typescript.md). The essentials:
 
-- **Layout.** Library packages live in `packages/<name>/` (scope `@dbp/`), with `src/index.ts` as the only public entry point and tests in `tests/unit/`. `packages/retry` is the reference implementation. Scaffold new packages with the `new-package` skill.
+- **Layout.** Library packages live in `packages/iso-<name>/` (browser and Node) or `packages/server-<name>/` (Node only), scope `@dbp/`. The prefix picks the ESLint factory that enforces it, and `just workspace-check` fails on a mismatch (see "Package Naming" in `docs/reference/typescript.md`). `src/index.ts` is the only public entry point, and tests live in `tests/unit/`. `packages/iso-retry` is the reference implementation. Scaffold new packages with the `new-package` skill.
 - **Strict compiler.** Every package extends `tsconfig.base.json` (`strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `verbatimModuleSyntax`, `erasableSyntaxOnly`, and more). Never override a strictness flag.
 - **ESM only.** `"type": "module"`, `NodeNext` resolution, `.js` extensions on relative imports. No new `.js`, `.mjs`, or `.cjs` files. Config files are TypeScript.
 - **Exports.** Explicit named exports in `src/index.ts`. No `export *` barrels and no `import * as`.

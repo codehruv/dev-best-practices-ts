@@ -48,7 +48,7 @@
       "cache": false
     },
     "docs:check": {
-      // ^build makes a change to @dbp/docs-gen, which runs the check, invalidate the cache.
+      // ^build makes a change to @dbp/server-docs-gen, which runs the check, invalidate the cache.
       "dependsOn": ["^build"],
       "inputs": [
         "src/**",

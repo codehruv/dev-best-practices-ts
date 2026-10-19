@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "types": ["node"],
+    // Doc tests import the package by its published name, so rendered samples are
+    // copy-pasteable. This maps that name to the source for type checking.
+    "paths": { "@dbp/iso-api-contract": ["./src/index.ts"] }
+  },
+  "include": ["src", "tests", "scripts", "*.config.ts"]
+}
