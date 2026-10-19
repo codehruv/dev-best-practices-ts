@@ -1,8 +1,7 @@
 name: SLO
 
 # Runs the benchmarks behind every benchmark-backed SLO in slo/, fails on a missed
-# objective, and tracks results over time on the gh-pages branch. Kept out of the CI
-# workflow because timings depend on runner load. See docs/reference/slo.md.
+# objective. Kept out of the CI workflow because timings depend on runner load. See docs/reference/slo.md.
 on:
   pull_request:
   push:
@@ -14,7 +13,7 @@ permissions:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  # Superseded PR runs are wasted work. Runs on main always finish, so history has no gaps.
+  # Superseded PR runs are wasted work.
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
@@ -48,9 +47,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # Fails only on an absolute objective. Runner hardware varies between runs, so the
-      # committed baselines (recorded on developer machines) never match here, and run-to-run
-      # tracking happens in the track job instead.
+      # Fails only on an absolute objective. Committed baselines are recorded on developer
+      # machines, so they never match runner hardware and only apply locally.
       - name: Check SLOs
         run: just slo --benchmark-action-dir slo-results
 
@@ -65,124 +63,3 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 30
-
-  # Appends main's results to the history on gh-pages and renders trend charts there.
-  # The only job with write access, and it runs only after code has merged.
-  track:
-    name: Record history
-    needs: measure
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: slo-results
-
-      # github-action-benchmark fetches gh-pages before recording and fails when the branch
-      # does not exist, so the first run on a new repository creates it empty.
-      - name: Create gh-pages on first run
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          remote="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          if ! git ls-remote --exit-code --heads "$remote" gh-pages >/dev/null; then
-            git -c user.name=github-actions -c user.email=github-actions@users.noreply.github.com \
-              commit-tree "$(git hash-object -t tree /dev/null)" -m "chore: initialize benchmark history" \
-              | xargs -I{} git push "$remote" {}:refs/heads/gh-pages
-          fi
-
-      - name: Record latency history
-        uses: benchmark-action/github-action-benchmark@4322e5726e6334590d251fc4f92bec0efafc45dc # v1.22.2
-        with:
-          name: SLO latency
-          tool: customSmallerIsBetter
-          output-file-path: slo-results/smaller-is-better.json
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          auto-push: true
-          benchmark-data-dir-path: slo
-          summary-always: true
-          # Shared runners vary by about 30% run to run. Warn at 1.5x, fail at 2x.
-          alert-threshold: '150%'
-          fail-on-alert: true
-          fail-threshold: '200%'
-
-      - name: Record throughput history
-        uses: benchmark-action/github-action-benchmark@4322e5726e6334590d251fc4f92bec0efafc45dc # v1.22.2
-        with:
-          name: SLO throughput
-          tool: customBiggerIsBetter
-          output-file-path: slo-results/bigger-is-better.json
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          auto-push: true
-          benchmark-data-dir-path: slo
-          summary-always: true
-          alert-threshold: '150%'
-          fail-on-alert: true
-          fail-threshold: '200%'
-
-  # Compares a pull request's results to main's history without writing anything.
-  compare:
-    name: Compare with main
-    needs: measure
-    if: ${{ github.event_name == 'pull_request' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      # The first main run creates gh-pages. Until then there is no history to compare with.
-      - name: Check for history
-        id: history
-        run: |
-          if git ls-remote --exit-code --heads origin gh-pages >/dev/null; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
-            echo "No SLO history on gh-pages yet. The first push to main creates it." >> "$GITHUB_STEP_SUMMARY"
-          fi
-
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        if: ${{ steps.history.outputs.exists == 'true' }}
-        with:
-          name: slo-results
-
-      - name: Compare latency
-        if: ${{ steps.history.outputs.exists == 'true' }}
-        uses: benchmark-action/github-action-benchmark@4322e5726e6334590d251fc4f92bec0efafc45dc # v1.22.2
-        with:
-          name: SLO latency
-          tool: customSmallerIsBetter
-          output-file-path: slo-results/smaller-is-better.json
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          auto-push: false
-          save-data-file: false
-          benchmark-data-dir-path: slo
-          summary-always: true
-          alert-threshold: '150%'
-          fail-on-alert: true
-          fail-threshold: '200%'
-
-      - name: Compare throughput
-        if: ${{ steps.history.outputs.exists == 'true' }}
-        uses: benchmark-action/github-action-benchmark@4322e5726e6334590d251fc4f92bec0efafc45dc # v1.22.2
-        with:
-          name: SLO throughput
-          tool: customBiggerIsBetter
-          output-file-path: slo-results/bigger-is-better.json
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          auto-push: false
-          save-data-file: false
-          benchmark-data-dir-path: slo
-          summary-always: true
-          alert-threshold: '150%'
-          fail-on-alert: true
-          fail-threshold: '200%'
