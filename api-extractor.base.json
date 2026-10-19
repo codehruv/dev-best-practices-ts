@@ -24,7 +24,7 @@
     "tsdocMessageReporting": {
       "default": { "logLevel": "error" },
       // TypeDoc owns tag validation: it rejects any block tag outside the shared list in
-      // @dbp/docs-gen/typedoc.base.json. API Extractor reads tag definitions from the same
+      // @dbp/server-docs-gen/typedoc.base.json. API Extractor reads tag definitions from the same
       // tsdoc.json TypeDoc would read, which would override that list, so it cannot learn
       // TypeDoc's {@includeCode} tag and must not report it.
       "tsdoc-undefined-tag": { "logLevel": "none" }

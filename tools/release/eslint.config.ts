@@ -1,3 +1,3 @@
-import { getBaseESLintConfig } from '../../eslint.config.base.ts';
+import { getNodeESLintConfig } from '../../eslint.config.base.ts';
 
-export default getBaseESLintConfig({ packageRootDir: import.meta.dirname });
+export default getNodeESLintConfig({ packageRootDir: import.meta.dirname });

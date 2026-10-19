@@ -20,7 +20,7 @@ Read `docs/reference/versioning.md` first.
 
    ```md
    ---
-   '@dbp/retry': minor
+   '@dbp/iso-retry': minor
    ---
 
    Added: `Retrier.withPolicy()` returns a copy with an overridden policy.

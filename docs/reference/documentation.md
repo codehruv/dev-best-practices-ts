@@ -15,7 +15,7 @@ them serves none well:
 ## Docs Come From Tests
 
 Every code sample in the docs runs as a test, so a sample can only be wrong if its test is
-wrong. `@dbp/docs-gen` (`packages/docs-gen`) renders the pages, and `just verify` fails when
+wrong. `@dbp/server-docs-gen` (`packages/server-docs-gen`) renders the pages, and `just verify` fails when
 they are incomplete or broken.
 
 | Quadrant      | Source                                   | Output                           | Generated? |
@@ -48,7 +48,7 @@ API and maps its structure to the page:
 
 Rules the generator enforces, failing `just generate` with a `file:line:column` error:
 
-- Import the package by its published name (`@dbp/retry`), never by relative path. Rendered
+- Import the package by its published name (`@dbp/iso-retry`), never by relative path. Rendered
   samples then copy-paste into real code. `tsconfig.json` `paths` and the Vitest `alias`
   map the name to `src/` in tests.
 - Each sample gets only the imports it uses. Test-framework imports never render.
@@ -74,7 +74,7 @@ region instead of carrying hand-typed code:
 
 The first `@example` line is the title (`jsDocCompatibility.exampleTag: false`).
 `tests/docs/reference/examples.test.ts` holds those regions and runs as a test, but it does
-not render as a page of its own. The shared TypeDoc config (`@dbp/docs-gen/typedoc.base.json`)
+not render as a page of its own. The shared TypeDoc config (`@dbp/server-docs-gen/typedoc.base.json`)
 treats every warning as an error, requires documentation on every exported member, allows
 only a fixed list of block tags, and disables source links, which point at files readers
 cannot open.
@@ -121,7 +121,7 @@ package with only the first steps done is still useful:
 
 1. **Getting-started tutorial.** One lesson from install to a working result. Without it,
    nobody gets far enough to need anything else.
-2. **How-to guides for the top real tasks,** most common first. For `@dbp/retry`: retry an
+2. **How-to guides for the top real tasks,** most common first. For `@dbp/iso-retry`: retry an
    HTTP request, cancel a retry, retry only transient errors, cap the total retry time, and
    test code that retries.
 3. **A tested reference example for every export** that no tutorial or how-to covers.
@@ -164,8 +164,8 @@ The numeric prefixes of doc test files encode this order.
 
 ## Adding Docs to a Package
 
-1. Add `@dbp/docs-gen`, `typedoc`, and `typedoc-plugin-markdown` as `catalog:` dev dependencies.
-2. Copy `typedoc.json` from `packages/retry`.
+1. Add `@dbp/server-docs-gen`, `typedoc`, and `typedoc-plugin-markdown` as `catalog:` dev dependencies.
+2. Copy `typedoc.json` from `packages/iso-retry`.
 3. Add the scripts `"generate": "typedoc && dbp-docs-gen generate"` and
    `"docs:check": "dbp-docs-gen check"`.
 4. Map the package name to `./src/index.ts` in `tsconfig.json` `paths` and in the Vitest `alias`.

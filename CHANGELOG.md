@@ -9,5 +9,5 @@ Package changelogs follow [Keep a Changelog](https://keepachangelog.com/en/2.0.0
 
 ## 2026-10-18
 
-- [`@dbp/api-contract` 0.1.0](packages/api-contract/CHANGELOG.md)
-- [`@dbp/retry` 0.1.0](packages/retry/CHANGELOG.md)
+- [`@dbp/iso-api-contract` 0.1.0](packages/iso-api-contract/CHANGELOG.md)
+- [`@dbp/iso-retry` 0.1.0](packages/iso-retry/CHANGELOG.md)

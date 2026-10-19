@@ -17,7 +17,7 @@ setup:
     pnpm exec lefthook install
 
 # Run every check CI runs.
-verify: fmt-check lint legacy-validate deadcode banned-terms changesets typecheck test docs-check
+verify: fmt-check lint legacy-validate workspace-check deadcode banned-terms changesets typecheck test docs-check
 
 # Apply linter then formatter fixes, then verify. Lint fixes run first because they can
 # leave code the formatter has to reflow.
@@ -72,6 +72,11 @@ legacy-update:
 
 # Find unused files, dependencies, and binaries. Unused exports belong to
 # import-integrity-lint, which runs inside ESLint.
+# Fail when a package lacks an iso- or server- prefix, or lints with the wrong config
+# factory for its prefix.
+workspace-check:
+    pnpm run workspace-check
+
 deadcode:
     pnpm run deadcode
 

@@ -1,0 +1,22 @@
+{
+  "name": "@dbp/workspace-check",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Checks that every workspace package follows the iso-/server- naming convention and lints with the matching config.",
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint --max-warnings 0 .",
+    "lint:fix": "eslint --fix .",
+    "test:unit": "vitest run",
+    "check": "node src/cli.ts",
+    "clean": "rm -rf coverage"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

@@ -42,7 +42,9 @@ docs/adr/                 architecture decision records
 .agents/skills/           verify, review, design-doc, write-comments, new-package
 .claude/                  permissions and hooks (guard dangerous commands, format on edit)
 .github/                  CI, security scans, PR title check, Dependabot, CODEOWNERS
-packages/retry/           reference package: retry with backoff and jitter
+packages/iso-*/           isomorphic packages (browser + Node), e.g. iso-retry
+packages/server-*/        Node-only packages, e.g. server-docs-gen, server-slo
+tools/                    dev-only CLIs (release automation, workspace checks)
 scripts/                  banned-terms and commit-message checks
 eslint.config.base.ts     shared strict ESLint config
 tsconfig.base.json        shared strict compiler config
@@ -54,7 +56,7 @@ justfile                  the command interface
 1. Copy the repo (or mark it as a GitHub template repository) and rename it.
 2. Replace the `@dbp/` scope and the `CODEOWNERS` owner.
 3. Add your private names and internal hosts to `.banned-terms`.
-4. Delete `packages/retry` once you have a package of your own, or keep it as a reference.
+4. Delete `packages/iso-retry` once you have a package of your own, or keep it as a reference.
 5. Turn on branch protection for `main`: required reviews, the `just verify` and security checks, a merge queue, and squash merges.
 
 ## Sources

@@ -11,7 +11,7 @@ An interface is anything another codebase depends on. Each one has a version, a 
 | A package's TypeScript public API | `package.json` `version`                           | `etc/<package>.api.md`, an [API Extractor](https://api-extractor.com/) report | `tools/release` (`classifyApiReportChange`)   |
 | A package's HTTP contract         | `package.json` `version`, copied to `info.version` | `openapi/openapi.json`, generated from Zod schemas                            | [oasdiff](https://github.com/oasdiff/oasdiff) |
 
-Packages are discovered by convention. A package with `api-extractor.json` has an API report. A package with `openapi/openapi.json` has an HTTP contract. A package can have both (`@dbp/api-contract` does). An artifact that does not exist on `main` yet is a new interface: its first version is the package's current version, so it needs no bump. Both artifacts are generated, committed, and kept fresh by `just generate` and the CI freshness check (see [`code-generation.md`](code-generation.md)).
+Packages are discovered by convention. A package with `api-extractor.json` has an API report. A package with `openapi/openapi.json` has an HTTP contract. A package can have both (`@dbp/iso-api-contract` does). An artifact that does not exist on `main` yet is a new interface: its first version is the package's current version, so it needs no bump. Both artifacts are generated, committed, and kept fresh by `just generate` and the CI freshness check (see [`code-generation.md`](code-generation.md)).
 
 Every exported symbol carries a release tag (`@public`, `@beta`, `@alpha`, or `@internal`). API Extractor fails on a missing tag, because SemVer only covers what you declare stable.
 
@@ -55,8 +55,8 @@ The summary is a list of Keep a Changelog entries, one per line, each starting w
 
 ```md
 ---
-'@dbp/retry': major
-'@dbp/api-contract': minor
+'@dbp/iso-retry': major
+'@dbp/iso-api-contract': minor
 ---
 
 Removed: **Breaking:** `Retrier.run()` no longer accepts a numeric timeout. Pass an `AbortSignal`.
@@ -76,7 +76,7 @@ Removal is planned for 2.0.0.
 
 ## Changelogs
 
-Each interface's `CHANGELOG.md` follows Keep a Changelog 2.0.0: the fixed preamble, an `## [Unreleased]` heading, one `## [x.y.z] - YYYY-MM-DD` section per release, and reference links at the bottom that compare each release tag with the one before it. Tags have the form `@dbp/retry@1.2.0`.
+Each interface's `CHANGELOG.md` follows Keep a Changelog 2.0.0: the fixed preamble, an `## [Unreleased]` heading, one `## [x.y.z] - YYYY-MM-DD` section per release, and reference links at the bottom that compare each release tag with the one before it. Tags have the form `@dbp/iso-retry@1.2.0`.
 
 The `[Unreleased]` section stays empty in the file. Pending changes live in `.changeset/`, which avoids merge conflicts between PRs. `pnpm changeset status` lists them.
 
@@ -99,7 +99,7 @@ Changelog entries come from changesets that people write for readers, never from
    2. runs `changeset version` to bump each `package.json` and delete the changesets,
    3. regenerates the API reports and OpenAPI documents so `info.version` matches.
 6. **Curate and merge the version PR.** Edit the changelog text if needed.
-7. **Release.** The next run on `main` tags each release (`@dbp/retry@1.3.0`) and publishes every package that is not `private`. Publishing needs an `NPM_TOKEN` repository secret, and the workflow fails early without one. Packages publish with npm provenance.
+7. **Release.** The next run on `main` tags each release (`@dbp/iso-retry@1.3.0`) and publishes every package that is not `private`. Publishing needs an `NPM_TOKEN` repository secret, and the workflow fails early without one. Packages publish with npm provenance.
 
 ## oasdiff
 
@@ -107,10 +107,10 @@ The dev shell and CI pin the same oasdiff release. Useful commands:
 
 ```sh
 # Every change between main and the working tree, with severity levels.
-oasdiff changelog main:packages/api-contract/openapi/openapi.json packages/api-contract/openapi/openapi.json
+oasdiff changelog main:packages/iso-api-contract/openapi/openapi.json packages/iso-api-contract/openapi/openapi.json
 
 # Only breaking changes. Exits 1 on any ERR-level change.
-oasdiff breaking main:packages/api-contract/openapi/openapi.json packages/api-contract/openapi/openapi.json --fail-on ERR
+oasdiff breaking main:packages/iso-api-contract/openapi/openapi.json packages/iso-api-contract/openapi/openapi.json --fail-on ERR
 ```
 
 `tools/release` runs oasdiff with `--allow-external-refs=false`, so a document cannot make it fetch URLs.

@@ -7,7 +7,7 @@ Write the summary as Keep a Changelog entries, one per line, each starting with 
 
 ```md
 ---
-'@dbp/retry': minor
+'@dbp/iso-retry': minor
 ---
 
 Added: `Retrier.withPolicy()` returns a copy with an overridden policy.
